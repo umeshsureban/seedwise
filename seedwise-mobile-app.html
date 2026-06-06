@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SeedWise — Field Agent App</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --g900: #031B0D;
+  --g800: #0A2E1C;
+  --g700: #0D4A2E;
+  --g600: #1A6B45;
+  --g500: #2D9962;
+  --g400: #3DBA78;
+  --g300: #6DD49A;
+  --g200: #A8EDCA;
+  --g100: #DFF4EB;
+  --g50:  #F6FAF7;
+  --gold:    #F0A020;
+  --gold-l:  #FFD060;
+  --gold-dk: #C07A10;
+  --red:     #EF4444;
+  --blue:    #3B82F6;
+  --blue-dk: #2563EB;
+  --card:    #FFFFFF;
+  --card-bg: #F6FAF7;
+  --text:    #0A2E1C;
+  --text-2:  #4A7A62;
+  --text-3:  #8AADA0;
+  --glass:       rgba(255,255,255,0.09);
+  --glass-b:     rgba(255,255,255,0.14);
+  --shadow-card: 0 2px 12px rgba(10,46,28,0.07), 0 0 0 1px rgba(10,46,28,0.04);
+  --r-sm:  10px;
+  --r-md:  14px;
+  --r-lg:  20px;
+  --r-xl:  28px;
+  --r-pill:100px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{font-size:16px;}
+body{
+  font-family:'Outfit',sans-serif;
+  background:var(--g900);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+/* ── VIEWPORT ── */
+.vp{
+  width:100vw;height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  background:
+    radial-gradient(ellipse 70% 55% at 15% 25%, rgba(45,153,98,0.22) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 60% at 85% 75%, rgba(13,74,46,0.5) 0%, transparent 70%),
+    linear-gradient(150deg, #020E07 0%, #031B0D 60%, #040F09 100%);
+  position:relative;overflow:hidden;
+}
+.vp::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(45,153,98,0.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(45,153,98,0.035) 1px,transparent 1px);
+  background-size:28px 28px;
+}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none;}
+.b1{width:520px;height:420px;background:rgba(45,153,98,0.16);top:-80px;left:-120px;}
+.b2{width:440px;height:560px;background:rgba(10,46,28,0.6);bottom:-120px;right:-80px;}
+.b3{width:320px;height:320px;background:rgba(109,212,154,0.09);top:45%;left:50%;transform:translate(-50%,-50%);}
+
+.vp-label{
+  font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(255,255,255,0.22);
+}
+
+/* ── PHONE FRAME ── */
+.phone{
+  position:relative;
+  width:390px;height:860px;
+  background:#081408;
+  border-radius:54px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.09),
+    0 0 0 4px rgba(5,18,8,0.9),
+    0 0 0 5px rgba(255,255,255,0.05),
+    0 48px 100px rgba(0,0,0,0.8),
+    0 0 80px rgba(45,153,98,0.10);
+  overflow:hidden;
+  display:flex;flex-direction:column;
+  flex-shrink:0;
+}
+.phone-side-btn{position:absolute;background:#111E13;border-radius:3px;}
+.btn-vu{left:-4px;top:120px;width:4px;height:28px;}
+.btn-vd{left:-4px;top:158px;width:4px;height:28px;}
+.btn-pw{right:-4px;top:140px;width:4px;height:44px;}
+
+/* ── DYNAMIC ISLAND ── */
+.di{
+  position:absolute;top:13px;left:50%;transform:translateX(-50%);
+  width:126px;height:36px;
+  background:#000;border-radius:20px;z-index:200;
+  display:flex;align-items:center;justify-content:center;gap:9px;
+}
+.di-cam{width:11px;height:11px;background:#141414;border-radius:50%;border:1.5px solid #1c1c1c;}
+.di-dot{width:8px;height:8px;background:#0D200F;border-radius:50%;}
+
+/* ── STATUS BAR ── */
+.sb{
+  height:62px;flex-shrink:0;
+  display:flex;align-items:flex-end;padding:0 28px 10px;
+  position:relative;z-index:10;background:transparent;
+}
+.sb-time{font-size:15px;font-weight:700;color:#fff;letter-spacing:-0.3px;flex:1;}
+.sb-icons{display:flex;align-items:center;gap:5px;}
+
+/* ── SCREEN AREA ── */
+.sa{flex:1;position:relative;overflow:hidden;}
+.screen{
+  position:absolute;inset:0;
+  overflow-y:auto;overflow-x:hidden;
+  display:none;scrollbar-width:none;
+  background:var(--card-bg);
+}
+.screen::-webkit-scrollbar{display:none;}
+.screen.active{display:block;}
+.screen.entering{animation:sIn 300ms cubic-bezier(0.34,1.5,0.64,1) both;}
+@keyframes sIn{
+  from{opacity:0;transform:translateX(28px) scale(0.96);}
+  to{opacity:1;transform:translateX(0) scale(1);}
+}
+
+/* ── TAB BAR ── */
+.tabs{
+  height:86px;flex-shrink:0;
+  background:rgba(8,20,8,0.94);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-top:1px solid rgba(255,255,255,0.06);
+  display:flex;align-items:center;padding:0 8px 12px;
+  position:relative;z-index:20;
+}
+.tab{
+  flex:1;height:54px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:4px;
+  background:none;border:none;cursor:pointer;
+  border-radius:14px;transition:all 180ms ease;
+}
+.tab:active{transform:scale(0.88);}
+.t-ico{
+  width:28px;height:28px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 200ms ease;
+}
+.t-ico svg{color:rgba(255,255,255,0.32);transition:color 200ms ease;}
+.t-lbl{font-size:10px;font-weight:600;color:rgba(255,255,255,0.28);transition:all 200ms ease;letter-spacing:0.2px;}
+.tab.active .t-ico{background:linear-gradient(145deg,var(--g700),var(--g600));box-shadow:0 4px 14px rgba(45,153,98,0.38);}
+.tab.active .t-ico svg{color:#fff;}
+.tab.active .t-lbl{color:var(--g300);font-weight:700;}
+.tab.center-t .t-ico{
+  width:52px;height:52px;border-radius:17px;
+  background:linear-gradient(145deg,var(--g600),var(--g500));
+  box-shadow:0 4px 20px rgba(45,153,98,0.42),0 0 0 3px rgba(45,153,98,0.16);
+  margin-top:-18px;
+}
+.tab.center-t .t-ico svg{color:#fff;}
+.tab.center-t.active .t-ico{
+  background:linear-gradient(145deg,var(--g500),var(--g400));
+  box-shadow:0 6px 24px rgba(61,186,120,0.52),0 0 0 3px rgba(61,186,120,0.22);
+}
+
+/* ── SHARED COMPONENTS ── */
+.s-head{
+  background:linear-gradient(155deg,var(--g800) 0%,var(--g700) 50%,var(--g600) 100%);
+  position:relative;overflow:hidden;
+}
+.s-head-blob{
+  position:absolute;border-radius:50%;
+  background:rgba(255,255,255,0.05);pointer-events:none;
+}
+.s-head-lines{
+  position:absolute;inset:0;pointer-events:none;opacity:0.055;
+  background-image:repeating-linear-gradient(45deg,rgba(255,255,255,0.6) 0,rgba(255,255,255,0.6) 1px,transparent 1px,transparent 18px);
+}
+.s-body{
+  border-radius:var(--r-xl) var(--r-xl) 0 0;
+  background:var(--card-bg);
+  margin-top:-22px;
+  padding:24px 20px 100px;
+  min-height:500px;
+}
+.sec{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;}
+.sec-ttl{font-size:11px;font-weight:800;color:var(--text-3);text-transform:uppercase;letter-spacing:0.9px;}
+.sec-lnk{font-size:13px;font-weight:700;color:var(--g500);text-decoration:none;}
+.card{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow-card);}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:var(--r-pill);font-size:10px;font-weight:700;}
+.p-g{background:rgba(45,153,98,0.1);color:#1A7A45;}
+.p-gd{background:rgba(240,160,32,0.1);color:var(--gold-dk);}
+.p-b{background:rgba(59,130,246,0.1);color:var(--blue-dk);}
+.p-r{background:rgba(239,68,68,0.1);color:#DC2626;}
+.p-gr{background:rgba(0,0,0,0.055);color:var(--text-2);}
+.prog-w{height:6px;background:rgba(0,0,0,0.07);border-radius:3px;overflow:hidden;}
+.prog{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--g700),var(--g500));}
+
+/* ── HOME SCREEN ── */
+.home-dark{
+  background:linear-gradient(175deg,#081408 0%,#0A1E10 70%,#0D2E18 100%);
+  padding-bottom:28px;
+}
+.app-bar{
+  display:flex;align-items:center;padding:2px 20px 16px;gap:10px;
+}
+.ab-logo{font-size:19px;font-weight:900;color:#fff;flex:1;letter-spacing:-0.6px;}
+.ab-logo em{font-style:normal;color:var(--g300);}
+.ab-btn{
+  width:36px;height:36px;
+  background:var(--glass);border:1px solid var(--glass-b);
+  border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+.hero{
+  margin:0 18px;border-radius:var(--r-xl);overflow:hidden;
+  background:linear-gradient(135deg,#0A2E1C 0%,#1A6B45 55%,#2EA864 100%);
+  padding:22px;min-height:182px;position:relative;
+}
+.hero-b1{position:absolute;width:170px;height:170px;border-radius:50%;background:rgba(255,255,255,0.05);top:-45px;right:-20px;}
+.hero-b2{position:absolute;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,0.04);bottom:-35px;right:45px;}
+.hero-b3{position:absolute;width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,0.07);top:55px;right:62px;}
+.hero-pat{
+  position:absolute;inset:0;opacity:0.055;
+  background-image:repeating-linear-gradient(45deg,rgba(255,255,255,0.7) 0,rgba(255,255,255,0.7) 1px,transparent 1px,transparent 18px);
+}
+.hero-gr{font-size:13px;color:rgba(255,255,255,0.58);font-weight:500;margin-bottom:4px;position:relative;}
+.hero-nm{font-size:25px;font-weight:900;color:#fff;letter-spacing:-0.6px;position:relative;margin-bottom:3px;line-height:1.1;}
+.hero-rl{font-size:12px;color:rgba(255,255,255,0.45);position:relative;margin-bottom:18px;}
+.hero-pills{display:flex;gap:8px;position:relative;}
+.h-pill{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(255,255,255,0.13);
+  border:1px solid rgba(255,255,255,0.2);
+  border-radius:var(--r-pill);padding:6px 13px;
+  font-size:12px;font-weight:700;color:#fff;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
+.ring-wrap{position:absolute;right:22px;top:50%;transform:translateY(-50%);}
+.ring{width:90px;height:90px;position:relative;}
+.ring svg{transform:rotate(-90deg);}
+.r-bg{fill:none;stroke:rgba(255,255,255,0.1);stroke-width:7;}
+.r-fill{
+  fill:none;stroke:url(#rg);stroke-width:7;stroke-linecap:round;
+  stroke-dasharray:232;stroke-dashoffset:29;
+}
+.r-txt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.r-num{font-size:22px;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1;}
+.r-sub{font-size:9px;color:rgba(255,255,255,0.48);font-weight:700;letter-spacing:0.5px;}
+.bento{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px;}
+.b-cell{
+  background:var(--card);border-radius:var(--r-lg);
+  padding:14px 11px;box-shadow:var(--shadow-card);
+  display:flex;flex-direction:column;gap:2px;
+}
+.b-num{font-size:26px;font-weight:900;letter-spacing:-1.2px;line-height:1;color:var(--text);}
+.b-num.gd{background:linear-gradient(135deg,#A06010,var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.b-num.gr{background:linear-gradient(135deg,var(--g700),var(--g500));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.b-lbl{font-size:9px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;margin-top:5px;}
+.b-tag{margin-top:7px;}
+.qa{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px;}
+.qa-btn{
+  background:var(--card);border:none;border-radius:var(--r-lg);
+  padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;
+  cursor:pointer;box-shadow:var(--shadow-card);transition:transform 140ms ease;
+}
+.qa-btn:active{transform:scale(0.93);}
+.qa-ico{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;}
+.qi-v{background:linear-gradient(135deg,#E6F6EC,#C8EDD8);}
+.qi-o{background:linear-gradient(135deg,#FFF4DC,#FFE4A0);}
+.qi-c{background:linear-gradient(135deg,#E6EEFF,#C8DBFF);}
+.qa-lbl{font-size:11px;font-weight:700;color:var(--text);text-align:center;}
+.vc{
+  padding:14px 15px;border-radius:var(--r-lg);background:var(--card);
+  box-shadow:var(--shadow-card);display:flex;gap:13px;align-items:center;
+  margin-bottom:10px;cursor:pointer;transition:transform 130ms ease;
+}
+.vc:active{transform:scale(0.97);}
+.vc-ico{width:44px;height:44px;background:linear-gradient(135deg,var(--g100),var(--g200));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.vc-info{flex:1;min-width:0;}
+.vc-nm{font-size:13px;font-weight:800;color:var(--text);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.vc-mt{font-size:11px;color:var(--text-2);}
+.vc-right{text-align:right;flex-shrink:0;}
+.vc-t{font-size:14px;font-weight:900;color:var(--g600);letter-spacing:-0.3px;}
+.ss{display:flex;gap:11px;overflow-x:auto;scrollbar-width:none;margin-bottom:22px;padding-bottom:2px;}
+.ss::-webkit-scrollbar{display:none;}
+.smc{width:138px;flex-shrink:0;border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-card);background:var(--card);cursor:pointer;transition:transform 140ms ease;}
+.smc:active{transform:scale(0.94);}
+.smc-top{height:88px;display:flex;align-items:center;justify-content:center;font-size:44px;}
+.smc-bot{padding:10px;}
+.smc-nm{font-size:12px;font-weight:800;color:var(--text);letter-spacing:-0.2px;}
+.smc-ct{font-size:10px;color:var(--text-3);margin-bottom:4px;}
+.smc-dy{font-size:10px;font-weight:700;color:var(--g600);}
+.af{margin-bottom:10px;}
+.ai{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid rgba(0,0,0,0.04);}
+.ai:last-child{border-bottom:none;}
+.ad{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.ad-g{background:var(--g400);box-shadow:0 0 0 3px rgba(61,186,120,0.14);}
+.ad-gd{background:var(--gold);box-shadow:0 0 0 3px rgba(240,160,32,0.14);}
+.ad-b{background:var(--blue);box-shadow:0 0 0 3px rgba(59,130,246,0.14);}
+.at{font-size:12px;font-weight:600;color:var(--text);flex:1;line-height:1.45;}
+.ats{font-size:10px;color:var(--text-3);flex-shrink:0;margin-top:2px;}
+
+/* ── TERRITORY ── */
+.t-hd{padding:22px 20px 44px;}
+.t-ttl{font-size:26px;font-weight:900;color:#fff;letter-spacing:-0.6px;margin-bottom:4px;}
+.t-sub{font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:22px;}
+.t-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.t-stat{
+  background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border:1px solid var(--glass-b);border-radius:var(--r-md);padding:14px 10px;text-align:center;
+}
+.ts-n{font-size:30px;font-weight:900;color:#fff;letter-spacing:-1.5px;line-height:1;}
+.ts-l{font-size:10px;color:rgba(255,255,255,0.45);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-top:4px;}
+.sc{
+  background:var(--card);border-radius:var(--r-lg);padding:15px;
+  margin-bottom:11px;box-shadow:var(--shadow-card);cursor:pointer;
+}
+.sc:active{transform:scale(0.98);}
+.sc-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:11px;}
+.sc-nm{font-size:14px;font-weight:800;color:var(--text);}
+.sc-mt{font-size:11px;color:var(--text-3);margin-top:2px;}
+.sc-pc{font-size:18px;font-weight:900;color:var(--g600);}
+.dist-card{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow-card);overflow:hidden;margin-bottom:8px;}
+.dist-row{display:flex;align-items:center;gap:11px;padding:13px 14px;}
+.dist-row+.dist-row{border-top:1px solid rgba(0,0,0,0.04);}
+.dist-rk{font-size:22px;}
+.dist-info{flex:1;}
+.dist-nm{font-size:13px;font-weight:800;color:var(--text);}
+.dist-mt{font-size:11px;color:var(--text-3);}
+.dist-bar{width:56px;}
+
+/* ── SEEDS ── */
+.sd-hd{padding:22px 20px 44px;}
+.sd-ttl{font-size:26px;font-weight:900;color:#fff;letter-spacing:-0.6px;margin-bottom:16px;}
+.srch{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.16);
+  border-radius:var(--r-pill);padding:12px 16px;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+.srch svg{color:rgba(255,255,255,0.4);flex-shrink:0;}
+.srch span{font-size:13px;color:rgba(255,255,255,0.38);font-weight:500;}
+.filters{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-bottom:18px;padding-bottom:2px;}
+.filters::-webkit-scrollbar{display:none;}
+.fc{flex-shrink:0;padding:8px 15px;border-radius:var(--r-pill);font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all 150ms ease;}
+.fc.on{background:var(--g800);color:#fff;}
+.fc:not(.on){background:rgba(0,0,0,0.055);color:var(--text-2);}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.sfc{background:var(--card);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-card);cursor:pointer;transition:transform 140ms ease;}
+.sfc:active{transform:scale(0.96);}
+.sfc-top{height:100px;display:flex;align-items:center;justify-content:center;font-size:52px;position:relative;}
+.sfc-badge{position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.18);color:#fff;border-radius:var(--r-pill);padding:3px 8px;font-size:9px;font-weight:800;backdrop-filter:blur(4px);}
+.sfc-body{padding:11px 12px;}
+.sfc-nm{font-size:13px;font-weight:800;color:var(--text);letter-spacing:-0.2px;margin-bottom:2px;}
+.sfc-ct{font-size:10px;color:var(--text-3);margin-bottom:7px;}
+.sfc-row{display:flex;align-items:center;justify-content:space-between;}
+.sfc-dy{font-size:11px;font-weight:700;color:var(--g700);}
+.sfc-pu{font-size:10px;color:var(--text-3);}
+
+/* ── ORDERS ── */
+.or-hd{padding:22px 20px 44px;}
+.or-ttl{font-size:26px;font-weight:900;color:#fff;letter-spacing:-0.6px;margin-bottom:18px;}
+.rev-card{
+  background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border:1px solid var(--glass-b);border-radius:var(--r-lg);padding:20px;
+}
+.rv-l{font-size:11px;color:rgba(255,255,255,0.5);font-weight:700;text-transform:uppercase;letter-spacing:0.7px;margin-bottom:6px;}
+.rv-n{font-size:38px;font-weight:900;color:#fff;letter-spacing:-2.5px;line-height:1;margin-bottom:8px;}
+.rv-row{display:flex;align-items:center;gap:8px;}
+.rv-ch{font-size:12px;font-weight:800;color:var(--g300);}
+.rv-pr{font-size:12px;color:rgba(255,255,255,0.38);}
+.pipe{display:flex;gap:7px;margin-bottom:22px;}
+.ps{
+  flex:1;background:var(--card);border-radius:var(--r-md);
+  padding:12px 8px;text-align:center;box-shadow:var(--shadow-card);
+}
+.ps.on{background:linear-gradient(145deg,var(--g800),var(--g700));}
+.ps-n{font-size:24px;font-weight:900;letter-spacing:-1px;line-height:1;}
+.ps:not(.on) .ps-n{color:var(--text);}
+.ps.on .ps-n{color:#fff;}
+.ps-l{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;margin-top:4px;}
+.ps:not(.on) .ps-l{color:var(--text-3);}
+.ps.on .ps-l{color:rgba(255,255,255,0.55);}
+.oi{
+  background:var(--card);border-radius:var(--r-lg);padding:14px 14px;
+  margin-bottom:9px;box-shadow:var(--shadow-card);
+  display:flex;gap:12px;align-items:center;cursor:pointer;
+}
+.oi:active{transform:scale(0.98);}
+.oi-ico{width:42px;height:42px;background:linear-gradient(135deg,var(--g100),var(--g200));border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
+.oi-info{flex:1;min-width:0;}
+.oi-nm{font-size:13px;font-weight:800;color:var(--text);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.oi-mt{font-size:11px;color:var(--text-3);}
+.oi-right{text-align:right;flex-shrink:0;}
+.oi-amt{font-size:15px;font-weight:900;color:var(--text);letter-spacing:-0.5px;margin-bottom:4px;}
+
+/* ── PROFILE ── */
+.pr-hd{padding:22px 20px 52px;display:flex;flex-direction:column;align-items:center;text-align:center;}
+.pr-av{
+  width:82px;height:82px;
+  background:linear-gradient(145deg,var(--g500),var(--g400));
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:38px;border:3px solid rgba(255,255,255,0.2);
+  margin-bottom:14px;box-shadow:0 8px 28px rgba(0,0,0,0.35);
+}
+.pr-nm{font-size:23px;font-weight:900;color:#fff;letter-spacing:-0.5px;margin-bottom:4px;}
+.pr-rl{font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:16px;}
+.pr-bgs{display:flex;gap:8px;justify-content:center;}
+.pr-bg{
+  background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);
+  border-radius:var(--r-pill);padding:6px 14px;
+  font-size:11px;font-weight:700;color:rgba(255,255,255,0.82);
+}
+.pstats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:22px;}
+.pst{background:var(--card);border-radius:var(--r-md);padding:12px 6px;text-align:center;box-shadow:var(--shadow-card);}
+.pst-n{font-size:20px;font-weight:900;color:var(--text);letter-spacing:-1px;line-height:1;}
+.pst-l{font-size:8px;color:var(--text-3);font-weight:700;text-transform:uppercase;letter-spacing:0.3px;margin-top:3px;}
+.ach{display:flex;gap:9px;overflow-x:auto;scrollbar-width:none;margin-bottom:22px;}
+.ach::-webkit-scrollbar{display:none;}
+.ab{flex-shrink:0;width:78px;background:var(--card);border-radius:var(--r-lg);padding:13px 8px;text-align:center;box-shadow:var(--shadow-card);}
+.ab-ico{font-size:27px;margin-bottom:5px;display:block;}
+.ab-nm{font-size:9px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:0.3px;}
+.si{
+  display:flex;align-items:center;gap:13px;background:var(--card);
+  border-radius:var(--r-md);padding:13px 13px;margin-bottom:8px;
+  box-shadow:var(--shadow-card);cursor:pointer;
+}
+.si-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.si-lbl{font-size:13px;font-weight:700;color:var(--text);flex:1;}
+.si-chv{color:var(--text-3);}
+</style>
+</head>
+<body>
+<div class="vp">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+
+  <div class="phone">
+    <div class="phone-side-btn btn-vu"></div>
+    <div class="phone-side-btn btn-vd"></div>
+    <div class="phone-side-btn btn-pw"></div>
+    <div class="di"><div class="di-cam"></div><div class="di-dot"></div></div>
+
+    <!-- STATUS BAR -->
+    <div class="sb">
+      <span class="sb-time" id="sb-time">9:41</span>
+      <div class="sb-icons">
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="white">
+          <rect x="0" y="7.5" width="2.5" height="4.5" rx="1" opacity="1"/>
+          <rect x="3.5" y="5" width="2.5" height="7" rx="1" opacity="1"/>
+          <rect x="7" y="2" width="2.5" height="10" rx="1" opacity="1"/>
+          <rect x="10.5" y="0" width="2.5" height="12" rx="1" opacity="0.3"/>
+        </svg>
+        <svg width="15" height="12" viewBox="0 0 15 12" fill="none">
+          <path d="M7.5 9a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm-3-2.8a4.3 4.3 0 016 0" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
+          <path d="M2.5 4.5a7.5 7.5 0 0110 0" stroke="white" stroke-width="1.4" stroke-linecap="round" opacity="0.55"/>
+        </svg>
+        <svg width="24" height="13" viewBox="0 0 24 13" fill="none">
+          <rect x="0.5" y="0.5" width="20" height="12" rx="3.5" stroke="white" stroke-opacity="0.35"/>
+          <rect x="2" y="2" width="14" height="9" rx="2" fill="white"/>
+          <path d="M22 4.5v4a2 2 0 000-4z" fill="white" fill-opacity="0.4"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- SCREEN AREA -->
+    <div class="sa">
+
+      <!-- ══ HOME ══ -->
+      <div class="screen active" id="screen-home">
+        <div class="home-dark">
+          <div class="app-bar">
+            <span class="ab-logo">Seed<em>Wise</em></span>
+            <div class="ab-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+                <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/>
+              </svg>
+            </div>
+            <div class="ab-btn" style="background:rgba(61,186,120,0.18);border-color:rgba(61,186,120,0.25);">
+              <span style="font-size:17px;">👤</span>
+            </div>
+          </div>
+          <div class="hero">
+            <div class="hero-b1"></div><div class="hero-b2"></div><div class="hero-b3"></div>
+            <div class="hero-pat"></div>
+            <svg width="0" height="0" style="position:absolute;">
+              <defs>
+                <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#6DD49A"/>
+                  <stop offset="100%" stop-color="#fff"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <div class="ring-wrap">
+              <div class="ring">
+                <svg width="90" height="90" viewBox="0 0 90 90">
+                  <circle class="r-bg" cx="45" cy="45" r="37"/>
+                  <circle class="r-fill" cx="45" cy="45" r="37"/>
+                </svg>
+                <div class="r-txt">
+                  <span class="r-num">87%</span>
+                  <span class="r-sub">TARGET</span>
+                </div>
+              </div>
+            </div>
+            <p class="hero-gr">Good morning 🌱</p>
+            <h2 class="hero-nm">Arjun Kumar</h2>
+            <p class="hero-rl">Field Agent · Karnataka Zone</p>
+            <div class="hero-pills">
+              <div class="h-pill">☀️ 28°C Sunny</div>
+              <div class="h-pill">📅 Mon, 6 Jun</div>
+            </div>
+          </div>
+          <div class="bento" style="padding:0 18px;margin-top:16px;">
+            <div class="b-cell">
+              <span class="b-num">4</span>
+              <span class="b-lbl">Visits Today</span>
+              <div class="b-tag"><span class="pill p-b">2 done</span></div>
+            </div>
+            <div class="b-cell">
+              <span class="b-num gd">₹2.4L</span>
+              <span class="b-lbl">This Week</span>
+              <div class="b-tag"><span class="pill p-g">+12%</span></div>
+            </div>
+            <div class="b-cell">
+              <span class="b-num gr">87%</span>
+              <span class="b-lbl">Monthly</span>
+              <div class="b-tag"><span class="pill p-gd">3 days</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Light body -->
+        <div style="background:var(--card-bg);margin-top:0;padding:22px 18px 100px;">
+          <div class="sec" style="margin-bottom:12px;"><span class="sec-ttl">Quick Actions</span></div>
+          <div class="qa">
+            <button class="qa-btn"><div class="qa-ico qi-v">🗺️</div><span class="qa-lbl">Log Visit</span></button>
+            <button class="qa-btn"><div class="qa-ico qi-o">📦</div><span class="qa-lbl">New Order</span></button>
+            <button class="qa-btn"><div class="qa-ico qi-c">📞</div><span class="qa-lbl">Call Dealer</span></button>
+          </div>
+
+          <div class="sec"><span class="sec-ttl">Today's Visits</span><a class="sec-lnk" href="#">See all</a></div>
+          <div class="vc">
+            <div class="vc-ico">🏪</div>
+            <div class="vc-info">
+              <div class="vc-nm">Ramesh Agro Distributors</div>
+              <div class="vc-mt">📍 Tumkur Rd · Dealer</div>
+            </div>
+            <div class="vc-right">
+              <div class="vc-t">10:30</div>
+              <span class="pill p-g">Upcoming</span>
+            </div>
+          </div>
+          <div class="vc" style="margin-bottom:22px;">
+            <div class="vc-ico">🌾</div>
+            <div class="vc-info">
+              <div class="vc-nm">Kumar Seeds & Fertilizers</div>
+              <div class="vc-mt">📍 Devanahalli · Retailer</div>
+            </div>
+            <div class="vc-right">
+              <div class="vc-t">2:00 PM</div>
+              <span class="pill p-gr">Scheduled</span>
+            </div>
+          </div>
+
+          <div class="sec"><span class="sec-ttl">Top Seeds</span><a class="sec-lnk" href="#">All seeds</a></div>
+          <div class="ss">
+            <div class="smc">
+              <div class="smc-top" style="background:linear-gradient(135deg,#FFEBEE,#FFCDD2);">🍅</div>
+              <div class="smc-bot"><div class="smc-nm">F1 AARYAN</div><div class="smc-ct">Tomato</div><div class="smc-dy">65–75 days</div></div>
+            </div>
+            <div class="smc">
+              <div class="smc-top" style="background:linear-gradient(135deg,#E8F5E9,#C8E6C9);">🥒</div>
+              <div class="smc-bot"><div class="smc-nm">F1 VARSHA</div><div class="smc-ct">Cucumber</div><div class="smc-dy">42 days</div></div>
+            </div>
+            <div class="smc">
+              <div class="smc-top" style="background:linear-gradient(135deg,#FFFDE7,#FFF9C4);">🌼</div>
+              <div class="smc-bot"><div class="smc-nm">F1 ISHA</div><div class="smc-ct">Marigold</div><div class="smc-dy">Floriculture</div></div>
+            </div>
+            <div class="smc">
+              <div class="smc-top" style="background:linear-gradient(135deg,#F3E5F5,#E1BEE7);">🌿</div>
+              <div class="smc-bot"><div class="smc-nm">HUNTER</div><div class="smc-ct">Coriander</div><div class="smc-dy">35 days</div></div>
+            </div>
+            <div class="smc">
+              <div class="smc-top" style="background:linear-gradient(135deg,#E3F2FD,#BBDEFB);">🌽</div>
+              <div class="smc-bot"><div class="smc-nm">SWEET GOLD</div><div class="smc-ct">Sweet Corn</div><div class="smc-dy">80 days</div></div>
+            </div>
+          </div>
+
+          <div class="sec"><span class="sec-ttl">Recent Activity</span></div>
+          <div class="af">
+            <div class="ai"><div class="ad ad-g"></div><div class="at">Order ₹48,000 confirmed from Agro Plus, Mysuru</div><div class="ats">9:12 AM</div></div>
+            <div class="ai"><div class="ad ad-gd"></div><div class="at">Visit logged at Srinivas Agro, Mandya</div><div class="ats">8:30 AM</div></div>
+            <div class="ai"><div class="ad ad-b"></div><div class="at">New lead: Mahalakshmi Seeds, Kolar added</div><div class="ats">Yesterday</div></div>
+            <div class="ai"><div class="ad ad-g"></div><div class="at">Monthly milestone: 75% target reached 🎉</div><div class="ats">Sat</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ TERRITORY ══ -->
+      <div class="screen" id="screen-territory">
+        <div class="s-head">
+          <div class="s-head-blob" style="width:200px;height:200px;top:-60px;right:-40px;"></div>
+          <div class="s-head-blob" style="width:130px;height:130px;bottom:-30px;right:60px;"></div>
+          <div class="s-head-lines"></div>
+          <div class="t-hd">
+            <h2 class="t-ttl">My Territory</h2>
+            <p class="t-sub">Kharif 2026 · Zone: Karnataka & Nearby</p>
+            <div class="t-stats">
+              <div class="t-stat"><div class="ts-n">12</div><div class="ts-l">Districts</div></div>
+              <div class="t-stat"><div class="ts-n">48</div><div class="ts-l">Dealers</div></div>
+              <div class="t-stat"><div class="ts-n">234</div><div class="ts-l">Farmers</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="s-body">
+          <div class="sec"><span class="sec-ttl">State Coverage</span><a class="sec-lnk" href="#">Map View</a></div>
+          <div class="sc">
+            <div class="sc-row">
+              <div><div class="sc-nm">🗺️ Karnataka</div><div class="sc-mt">8 districts · 32 dealers · 186 farmers</div></div>
+              <div style="text-align:right;"><div class="sc-pc">92%</div><span class="pill p-g">Primary</span></div>
+            </div>
+            <div class="prog-w"><div class="prog" style="width:92%;"></div></div>
+          </div>
+          <div class="sc">
+            <div class="sc-row">
+              <div><div class="sc-nm">🗺️ Andhra Pradesh</div><div class="sc-mt">3 districts · 12 dealers · 34 farmers</div></div>
+              <div style="text-align:right;"><div class="sc-pc" style="color:var(--blue);">68%</div><span class="pill p-b">Growing</span></div>
+            </div>
+            <div class="prog-w"><div class="prog" style="width:68%;background:linear-gradient(90deg,#1565C0,#3B82F6);"></div></div>
+          </div>
+          <div class="sc" style="margin-bottom:22px;">
+            <div class="sc-row">
+              <div><div class="sc-nm">🗺️ Telangana</div><div class="sc-mt">1 district · 4 dealers · 14 farmers</div></div>
+              <div style="text-align:right;"><div class="sc-pc" style="color:var(--gold-dk);">35%</div><span class="pill p-gd">New</span></div>
+            </div>
+            <div class="prog-w"><div class="prog" style="width:35%;background:linear-gradient(90deg,#A06010,var(--gold));"></div></div>
+          </div>
+
+          <div class="sec"><span class="sec-ttl">Top Districts</span></div>
+          <div class="dist-card">
+            <div class="dist-row">
+              <span class="dist-rk">🥇</span>
+              <div class="dist-info"><div class="dist-nm">Tumkur</div><div class="dist-mt">8 dealers · ₹86,000 revenue</div></div>
+              <div class="dist-bar"><div class="prog-w"><div class="prog" style="width:100%;"></div></div></div>
+            </div>
+            <div class="dist-row">
+              <span class="dist-rk">🥈</span>
+              <div class="dist-info"><div class="dist-nm">Mysuru</div><div class="dist-mt">6 dealers · ₹72,000 revenue</div></div>
+              <div class="dist-bar"><div class="prog-w"><div class="prog" style="width:84%;"></div></div></div>
+            </div>
+            <div class="dist-row">
+              <span class="dist-rk">🥉</span>
+              <div class="dist-info"><div class="dist-nm">Bengaluru Rural</div><div class="dist-mt">5 dealers · ₹58,000 revenue</div></div>
+              <div class="dist-bar"><div class="prog-w"><div class="prog" style="width:67%;"></div></div></div>
+            </div>
+            <div class="dist-row">
+              <span class="dist-rk">4️⃣</span>
+              <div class="dist-info"><div class="dist-nm">Mandya</div><div class="dist-mt">4 dealers · ₹44,000 revenue</div></div>
+              <div class="dist-bar"><div class="prog-w"><div class="prog" style="width:51%;"></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ SEEDS ══ -->
+      <div class="screen" id="screen-seeds">
+        <div class="s-head">
+          <div class="s-head-blob" style="width:180px;height:180px;top:-50px;right:-30px;"></div>
+          <div class="s-head-lines"></div>
+          <div class="sd-hd">
+            <h2 class="sd-ttl">Seed Catalog</h2>
+            <div class="srch">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              <span>Search seeds, crops...</span>
+            </div>
+          </div>
+        </div>
+        <div class="s-body">
+          <div class="filters">
+            <button class="fc on">All</button>
+            <button class="fc">🍅 Tomato</button>
+            <button class="fc">🥒 Cucumber</button>
+            <button class="fc">🌼 Marigold</button>
+            <button class="fc">🌿 Herbs</button>
+            <button class="fc">🌽 Corn</button>
+            <button class="fc">🧅 Onion</button>
+            <button class="fc">🫘 Beans</button>
+          </div>
+          <div class="sgrid">
+            <div class="sfc">
+              <div class="sfc-top" style="background:linear-gradient(135deg,#FFEBEE,#FFCDD2);">🍅<div class="sfc-badge">BESTSELLER</div></div>
+              <div class="sfc-body"><div class="sfc-nm">F1 AARYAN</div><div class="sfc-ct">Tomato</div><div class="sfc-row"><span class="sfc-dy">65–75 Days</span><span class="sfc-pu">98% pure</span></div></div>
+            </div>
+            <div class="sfc">
+              <div class="sfc-top" style="background:linear-gradient(135deg,#E8F5E9,#C8E6C9);">🥒<div class="sfc-badge">NEW</div></div>
+              <div class="sfc-body"><div class="sfc-nm">F1 VARSHA</div><div class="sfc-ct">Cucumber</div><div class="sfc-row"><span class="sfc-dy">42 Days</span><span class="sfc-pu">98% pure</span></div></div>
+            </div>
+            <div class="sfc">
+              <div class="sfc-top" style="background:linear-gradient(135deg,#FFFDE7,#FFF9C4);">🌼</div>
+              <div class="sfc-body"><div class="sfc-nm">F1 ISHA</div><div class="sfc-ct">Marigold</div><div class="sfc-row"><span class="sfc-dy">Seasonal</span><span class="sfc-pu">98% pure</span></div></div>
+            </div>
+            <div class="sfc">
+              <div class="sfc-top" style="background:linear-gradient(135deg,#F3E5F5,#E1BEE7);">🌿</div>
+              <div class="sfc-body"><div class="sfc-nm">HUNTER</div><div class="sfc-ct">Coriander</div><div class="sfc-row"><span class="sfc-dy">35 Days</span><span class="sfc-pu">98% pure</span></div></div>
+            </div>
+            <div class="sfc">
+              <div class="sfc-top" style="background:linear-gradient(135deg,#FBE9E7,#FFCCBC);">🌶️</div>
+              <div class="sfc-body"><div class="sfc-nm">F1 SATHVIK</div><div class="sfc-ct">Tomato</div><div class="sfc-row"><span class="sfc-dy">70 Days</span><span class="sfc-pu">98% pure</span></div></div>
+            </div>
+            <div class="sfc">
+              <div class="sfc-top" style="background:linear-gradient(135deg,#E3F2FD,#BBDEFB);">🌽</div>
+              <div class="sfc-body"><div class="sfc-nm">SWEET GOLD</div><div class="sfc-ct">Sweet Corn</div><div class="sfc-row"><span class="sfc-dy">80 Days</span><span class="sfc-pu">98% pure</span></div></div>
+            </div>
+            <div class="sfc">
+              <div class="sfc-top" style="background:linear-gradient(135deg,#FFF8E1,#FFECB3);">🧅</div>
+              <div class="sfc-body"><div class="sfc-nm">MADHU</div><div class="sfc-ct">Onion</div><div class="sfc-row"><span class="sfc-dy">110 Days</span><span class="sfc-pu">98% pure</span></div></div>
+            </div>
+            <div class="sfc">
+              <div class="sfc-top" style="background:linear-gradient(135deg,#E8EAF6,#C5CAE9);">🫘</div>
+              <div class="sfc-body"><div class="sfc-nm">ASHA</div><div class="sfc-ct">Yard Long Beans</div><div class="sfc-row"><span class="sfc-dy">45 Days</span><span class="sfc-pu">98% pure</span></div></div>
+            </div>
+            <div class="sfc">
+              <div class="sfc-top" style="background:linear-gradient(135deg,#E0F2F1,#B2DFDB);">🥬</div>
+              <div class="sfc-body"><div class="sfc-nm">PUSHPA</div><div class="sfc-ct">Palak / Spinach</div><div class="sfc-row"><span class="sfc-dy">25 Days</span><span class="sfc-pu">98% pure</span></div></div>
+            </div>
+            <div class="sfc">
+              <div class="sfc-top" style="background:linear-gradient(135deg,#FCE4EC,#F8BBD0);">🫒</div>
+              <div class="sfc-body"><div class="sfc-nm">SHREYA</div><div class="sfc-ct">Cluster Beans</div><div class="sfc-row"><span class="sfc-dy">40 Days</span><span class="sfc-pu">98% pure</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ORDERS ══ -->
+      <div class="screen" id="screen-orders">
+        <div class="s-head">
+          <div class="s-head-blob" style="width:200px;height:200px;top:-60px;right:-30px;"></div>
+          <div class="s-head-lines"></div>
+          <div class="or-hd">
+            <h2 class="or-ttl">Orders</h2>
+            <div class="rev-card">
+              <div class="rv-l">June Revenue</div>
+              <div class="rv-n">₹2,40,000</div>
+              <div class="rv-row"><span class="rv-ch">▲ +12.4%</span><span class="rv-pr">vs last month</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="s-body">
+          <div class="sec" style="margin-bottom:12px;"><span class="sec-ttl">Pipeline</span></div>
+          <div class="pipe">
+            <div class="ps"><div class="ps-n">8</div><div class="ps-l">Leads</div></div>
+            <div class="ps"><div class="ps-n">5</div><div class="ps-l">Quoted</div></div>
+            <div class="ps on"><div class="ps-n">12</div><div class="ps-l">Confirmed</div></div>
+            <div class="ps"><div class="ps-n">19</div><div class="ps-l">Delivered</div></div>
+          </div>
+
+          <div class="sec"><span class="sec-ttl">This Month</span><a class="sec-lnk" href="#">Filter</a></div>
+          <div class="oi">
+            <div class="oi-ico">🏪</div>
+            <div class="oi-info"><div class="oi-nm">Ramesh Agro Distributors</div><div class="oi-mt">Tumkur · F1 AARYAN × 200 packs</div></div>
+            <div class="oi-right"><div class="oi-amt">₹48,000</div><span class="pill p-g">Delivered</span></div>
+          </div>
+          <div class="oi">
+            <div class="oi-ico">🌾</div>
+            <div class="oi-info"><div class="oi-nm">Kumar Seeds & Fertilizers</div><div class="oi-mt">Devanahalli · Mixed · 5 varieties</div></div>
+            <div class="oi-right"><div class="oi-amt">₹32,500</div><span class="pill p-b">Confirmed</span></div>
+          </div>
+          <div class="oi">
+            <div class="oi-ico">🌱</div>
+            <div class="oi-info"><div class="oi-nm">Agro Plus, Mysuru</div><div class="oi-mt">Mysuru · F1 VARSHA × 150 packs</div></div>
+            <div class="oi-right"><div class="oi-amt">₹28,000</div><span class="pill p-g">Delivered</span></div>
+          </div>
+          <div class="oi">
+            <div class="oi-ico">🏬</div>
+            <div class="oi-info"><div class="oi-nm">Srinivas Agro, Mandya</div><div class="oi-mt">Mandya · HUNTER × 80 packs</div></div>
+            <div class="oi-right"><div class="oi-amt">₹18,400</div><span class="pill p-gd">In Transit</span></div>
+          </div>
+          <div class="oi">
+            <div class="oi-ico">🌿</div>
+            <div class="oi-info"><div class="oi-nm">Mahalakshmi Seeds, Kolar</div><div class="oi-mt">Kolar · F1 ISHA × 100 packs</div></div>
+            <div class="oi-right"><div class="oi-amt">₹22,000</div><span class="pill p-gr">Quoted</span></div>
+          </div>
+          <div class="oi">
+            <div class="oi-ico">🌾</div>
+            <div class="oi-info"><div class="oi-nm">Green Earth Nursery</div><div class="oi-mt">Tumkur · MADHU × 60 packs</div></div>
+            <div class="oi-right"><div class="oi-amt">₹15,600</div><span class="pill p-b">Confirmed</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PROFILE ══ -->
+      <div class="screen" id="screen-profile">
+        <div class="s-head">
+          <div class="s-head-blob" style="width:220px;height:220px;top:-80px;right:-50px;"></div>
+          <div class="s-head-blob" style="width:140px;height:140px;bottom:-40px;left:20px;"></div>
+          <div class="s-head-lines"></div>
+          <div class="pr-hd">
+            <div class="pr-av">👨‍🌾</div>
+            <div class="pr-nm">Arjun Kumar</div>
+            <div class="pr-rl">Field Agent · Karnataka Zone · 3 yrs</div>
+            <div class="pr-bgs">
+              <div class="pr-bg">⭐ Gold Agent</div>
+              <div class="pr-bg">🏆 Top 10%</div>
+            </div>
+          </div>
+        </div>
+        <div class="s-body">
+          <div class="pstats">
+            <div class="pst"><div class="pst-n">234</div><div class="pst-l">Farmers</div></div>
+            <div class="pst"><div class="pst-n">48</div><div class="pst-l">Dealers</div></div>
+            <div class="pst"><div class="pst-n">287</div><div class="pst-l">Orders</div></div>
+            <div class="pst"><div class="pst-n" style="font-size:15px;">₹28L</div><div class="pst-l">Lifetime</div></div>
+          </div>
+
+          <div class="sec"><span class="sec-ttl">Achievements</span></div>
+          <div class="ach">
+            <div class="ab"><span class="ab-ico">🏆</span><span class="ab-nm">Top Seller</span></div>
+            <div class="ab"><span class="ab-ico">🌱</span><span class="ab-nm">100+ Farmers</span></div>
+            <div class="ab"><span class="ab-ico">⚡</span><span class="ab-nm">Fast Closer</span></div>
+            <div class="ab"><span class="ab-ico">🎯</span><span class="ab-nm">On Target</span></div>
+            <div class="ab"><span class="ab-ico">🔥</span><span class="ab-nm">30d Streak</span></div>
+            <div class="ab"><span class="ab-ico">🌾</span><span class="ab-nm">Harvest Pro</span></div>
+          </div>
+
+          <div class="sec"><span class="sec-ttl">Account</span></div>
+          <div>
+            <div class="si"><div class="si-ico" style="background:#E8F5E9;">📊</div><span class="si-lbl">Performance Report</span><svg class="si-chv" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
+            <div class="si"><div class="si-ico" style="background:#E3F2FD;">🗺️</div><span class="si-lbl">Territory Settings</span><svg class="si-chv" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
+            <div class="si"><div class="si-ico" style="background:#FFF3E0;">🔔</div><span class="si-lbl">Notifications</span><svg class="si-chv" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
+            <div class="si"><div class="si-ico" style="background:#FCE4EC;">🌐</div><span class="si-lbl">Language · English</span><svg class="si-chv" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
+            <div class="si"><div class="si-ico" style="background:#F3E5F5;">🔒</div><span class="si-lbl">Privacy & Security</span><svg class="si-chv" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
+          </div>
+          <div style="text-align:center;padding:20px 0 0;">
+            <div style="font-size:12px;color:var(--text-3);font-weight:600;">SeedWise Field App v2.4.1</div>
+            <div style="font-size:11px;color:var(--text-3);margin-top:3px;">From Science to Harvest 🌱</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /sa -->
+
+    <!-- TAB BAR -->
+    <nav class="tabs">
+      <button class="tab active" id="tab-home" onclick="sw(this,'home')">
+        <div class="t-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg></div>
+        <span class="t-lbl">Home</span>
+      </button>
+      <button class="tab" id="tab-territory" onclick="sw(this,'territory')">
+        <div class="t-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="10" r="3"/><path d="M12 2C7.58 2 4 5.58 4 10c0 5.25 8 12 8 12s8-6.75 8-12c0-4.42-3.58-8-8-8z"/></svg></div>
+        <span class="t-lbl">Territory</span>
+      </button>
+      <button class="tab center-t" id="tab-seeds" onclick="sw(this,'seeds')">
+        <div class="t-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 22V12"/><path d="M12 12C12 12 7 7 3 8c1 4 5 8 9 4"/><path d="M12 12C12 12 17 7 21 8c-1 4-5 8-9 4"/></svg></div>
+        <span class="t-lbl">Seeds</span>
+      </button>
+      <button class="tab" id="tab-orders" onclick="sw(this,'orders')">
+        <div class="t-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></div>
+        <span class="t-lbl">Orders</span>
+      </button>
+      <button class="tab" id="tab-profile" onclick="sw(this,'profile')">
+        <div class="t-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <span class="t-lbl">Profile</span>
+      </button>
+    </nav>
+  </div><!-- /phone -->
+
+  <div class="vp-label">SeedWise Field Agent · Demo</div>
+</div>
+
+<script>
+(function(){
+  function updateTime(){
+    var d=new Date(),h=d.getHours(),m=d.getMinutes();
+    var el=document.getElementById('sb-time');
+    if(el) el.textContent=h+':'+(m<10?'0':'')+m;
+  }
+  updateTime();
+  setInterval(updateTime,15000);
+
+  window.sw=function(btn,id){
+    document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('active');});
+    btn.classList.add('active');
+    var cur=document.querySelector('.screen.active');
+    var nxt=document.getElementById('screen-'+id);
+    if(cur===nxt)return;
+    cur.classList.remove('active');
+    nxt.classList.add('active','entering');
+    nxt.scrollTop=0;
+    setTimeout(function(){nxt.classList.remove('entering');},320);
+  };
+
+  document.querySelectorAll('.fc').forEach(function(c){
+    c.addEventListener('click',function(){
+      c.closest('.filters').querySelectorAll('.fc').forEach(function(x){x.classList.remove('on');});
+      c.classList.add('on');
+    });
+  });
+})();
+</script>
+</body>
+</html>

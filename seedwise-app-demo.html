@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SeedWise Technologies — Field Intelligence App</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sw-green-dark:  #1B4D2E;
+    --sw-green:       #2D7A4F;
+    --sw-green-mid:   #3D9B66;
+    --sw-green-light: #6CC08A;
+    --sw-green-pale:  #E6F5EC;
+    --sw-gold:        #D4860A;
+    --sw-gold-light:  #F5C842;
+    --sw-gold-pale:   #FFF8E6;
+    --sw-cream:       #FAFAF6;
+    --sw-parch:       #F2EDE3;
+    --sw-border:      #E2DDD3;
+    --sw-soil:        #2A1A0C;
+    --sw-bark:        #5C3D1E;
+    --sw-text:        #1A2E1F;
+    --sw-text-mid:    #4A6355;
+    --sw-text-muted:  #8BA898;
+    --sw-red:         #C0392B;
+    --sw-orange:      #E67E22;
+    --sw-blue:        #2980B9;
+    --sw-purple:      #7B3FA0;
+    --sidebar-w:      248px;
+  }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--sw-cream);
+    color: var(--sw-text);
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ── LAYOUT ── */
+  .app { display:flex; height:100vh; max-width:1440px; margin:0 auto; background:#fff; box-shadow:0 0 60px rgba(27,77,46,.15); }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w);
+    min-width: var(--sidebar-w);
+    background: var(--sw-green-dark);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+  .sidebar::after {
+    content:'';
+    position:absolute;
+    bottom:-80px; right:-80px;
+    width:260px; height:260px;
+    border-radius:50%;
+    background: radial-gradient(circle, rgba(108,192,138,.18) 0%, transparent 70%);
+    pointer-events:none;
+  }
+
+  .sb-brand {
+    padding: 22px 20px 16px;
+    border-bottom: 1px solid rgba(255,255,255,.09);
+  }
+  .sb-brand-row { display:flex; align-items:center; gap:10px; }
+  .sb-logo {
+    width:40px; height:40px;
+    background: linear-gradient(135deg, var(--sw-green-mid), var(--sw-green-light));
+    border-radius:11px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:21px; flex-shrink:0;
+    box-shadow: 0 4px 12px rgba(0,0,0,.25);
+  }
+  .sb-name {
+    font-family: 'Playfair Display', serif;
+    font-size:18px; font-weight:700;
+    color:#fff; letter-spacing:-.2px; line-height:1.1;
+  }
+  .sb-sub { font-size:9.5px; color:var(--sw-green-light); text-transform:uppercase; letter-spacing:1.4px; margin-top:2px; }
+
+  .sb-agent {
+    margin:14px 14px 6px;
+    background: rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:12px; padding:14px;
+  }
+  .sb-av {
+    width:38px; height:38px; border-radius:50%;
+    background: linear-gradient(135deg, var(--sw-gold), var(--sw-gold-light));
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-size:14px; color:var(--sw-green-dark);
+    margin-bottom:9px;
+  }
+  .sb-ag-name { font-size:13px; font-weight:700; color:#fff; }
+  .sb-ag-role { font-size:11px; color:rgba(255,255,255,.55); margin-top:2px; }
+  .sb-ag-badge {
+    display:inline-flex; align-items:center; gap:5px;
+    background:rgba(61,155,102,.35); color:var(--sw-green-light);
+    font-size:10px; font-weight:600; padding:3px 9px; border-radius:20px; margin-top:8px;
+  }
+
+  .sb-section {
+    padding:10px 16px 4px;
+    font-size:9px; font-weight:700; text-transform:uppercase;
+    letter-spacing:1.6px; color:rgba(255,255,255,.3);
+  }
+  .sb-nav {
+    display:flex; align-items:center; gap:11px;
+    padding:10px 14px; margin:1px 10px;
+    border-radius:10px; cursor:pointer;
+    color:rgba(255,255,255,.55); font-size:13px; font-weight:500;
+    transition:all .18s; position:relative; user-select:none;
+  }
+  .sb-nav:hover { background:rgba(255,255,255,.07); color:rgba(255,255,255,.85); }
+  .sb-nav.active {
+    background:linear-gradient(135deg,rgba(45,122,79,.6),rgba(61,155,102,.3));
+    color:#fff; font-weight:600;
+  }
+  .sb-nav.active::before {
+    content:''; position:absolute; left:0; top:50%; transform:translateY(-50%);
+    width:3px; height:55%; background:var(--sw-green-light); border-radius:0 3px 3px 0;
+  }
+  .sb-nav-icon { font-size:16px; width:20px; text-align:center; flex-shrink:0; }
+  .sb-badge {
+    margin-left:auto; background:var(--sw-gold); color:var(--sw-green-dark);
+    font-size:10px; font-weight:800; padding:2px 7px; border-radius:20px; min-width:20px; text-align:center;
+  }
+
+  .sb-foot {
+    margin-top:auto; padding:14px 16px;
+    border-top:1px solid rgba(255,255,255,.08);
+  }
+  .sb-sync { display:flex; align-items:center; gap:7px; font-size:11px; color:rgba(255,255,255,.4); }
+  .sb-sync-dot { width:7px; height:7px; border-radius:50%; background:var(--sw-green-light); animation:blink 2s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  .sb-iso {
+    font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.8px;
+    color:rgba(255,255,255,.25); margin-top:6px;
+  }
+
+  /* ── MAIN ── */
+  .main { flex:1; display:flex; flex-direction:column; overflow:hidden; background:var(--sw-cream); }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    background:#fff; border-bottom:1px solid var(--sw-border);
+    padding:0 28px; height:62px;
+    display:flex; align-items:center; gap:14px; flex-shrink:0;
+  }
+  .tb-title { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:var(--sw-green-dark); }
+  .tb-sub { font-size:11.5px; color:var(--sw-text-muted); margin-top:1px; }
+  .tb-right { margin-left:auto; display:flex; align-items:center; gap:10px; }
+  .weather-pill {
+    display:flex; align-items:center; gap:6px;
+    background:var(--sw-green-pale); border:1px solid #C2DFC9;
+    border-radius:20px; padding:5px 13px;
+    font-size:11.5px; color:var(--sw-green); font-weight:600;
+  }
+  .notif {
+    position:relative; width:36px; height:36px;
+    background:var(--sw-parch); border-radius:9px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:17px; cursor:pointer; border:1px solid var(--sw-border);
+  }
+  .notif-dot {
+    position:absolute; top:-3px; right:-3px;
+    width:15px; height:15px; background:var(--sw-red);
+    border-radius:50%; font-size:8.5px; font-weight:800; color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    border:2px solid var(--sw-cream);
+  }
+  .btn {
+    display:inline-flex; align-items:center; gap:6px;
+    padding:8px 16px; border-radius:9px;
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:12.5px; font-weight:600; cursor:pointer; border:none; transition:all .18s;
+  }
+  .btn-primary { background:var(--sw-green); color:#fff; }
+  .btn-primary:hover { background:var(--sw-green-dark); }
+  .btn-outline { background:transparent; border:1.5px solid var(--sw-border); color:var(--sw-text-mid); }
+  .btn-outline:hover { border-color:var(--sw-green); color:var(--sw-green); }
+  .btn-gold { background:var(--sw-gold); color:#fff; }
+  .btn-gold:hover { background:#b8720a; }
+
+  /* ── CONTENT ── */
+  .content { flex:1; overflow-y:auto; padding:24px 28px; }
+  .content::-webkit-scrollbar { width:4px; }
+  .content::-webkit-scrollbar-thumb { background:var(--sw-border); border-radius:10px; }
+
+  /* ── PANELS ── */
+  .panel { display:none; animation:fadeIn .25s ease; }
+  .panel.active { display:block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+
+  /* ── TABS ── */
+  .tab-row {
+    display:flex; gap:3px;
+    background:#fff; border:1px solid var(--sw-border);
+    border-radius:11px; padding:3px; width:fit-content; margin-bottom:22px;
+  }
+  .tab {
+    padding:7px 18px; border-radius:8px;
+    font-size:12.5px; font-weight:600; cursor:pointer;
+    color:var(--sw-text-muted); transition:all .18s;
+    border:none; background:none;
+    font-family:'Plus Jakarta Sans',sans-serif;
+  }
+  .tab.active { background:var(--sw-green); color:#fff; }
+  .tab:hover:not(.active) { color:var(--sw-text); }
+
+  /* ── STAT CARDS ── */
+  .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:22px; }
+  .stat {
+    background:#fff; border-radius:14px; padding:18px 20px;
+    border:1px solid var(--sw-border); position:relative; overflow:hidden;
+    transition:transform .2s, box-shadow .2s;
+  }
+  .stat:hover { transform:translateY(-2px); box-shadow:0 8px 22px rgba(27,77,46,.08); }
+  .stat-icon { position:absolute; top:16px; right:16px; font-size:22px; opacity:.75; }
+  .stat-lbl { font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.7px; color:var(--sw-text-muted); margin-bottom:9px; }
+  .stat-val { font-family:'Playfair Display',serif; font-size:30px; font-weight:700; color:var(--sw-green-dark); line-height:1; margin-bottom:7px; }
+  .stat-delta { font-size:11.5px; font-weight:600; display:flex; align-items:center; gap:4px; }
+  .up   { color:#27AE60; }
+  .down { color:var(--sw-red); }
+  .neutral { color:var(--sw-text-muted); }
+
+  /* ── CARD ── */
+  .card { background:#fff; border-radius:14px; border:1px solid var(--sw-border); overflow:hidden; }
+  .card-hd {
+    padding:14px 20px; border-bottom:1px solid var(--sw-border);
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .card-title { font-size:13.5px; font-weight:700; color:var(--sw-green-dark); display:flex; align-items:center; gap:7px; }
+  .card-action { font-size:12px; color:var(--sw-green); cursor:pointer; font-weight:600; }
+
+  /* ── TWO-COL ── */
+  .two-col { display:grid; grid-template-columns:1.45fr 1fr; gap:18px; margin-bottom:18px; }
+
+  /* ── VISIT LIST ── */
+  .vlist-item {
+    display:flex; align-items:center; gap:12px; padding:11px 20px;
+    border-bottom:1px solid #F4EFE6; cursor:pointer;
+    transition:background .15s;
+  }
+  .vlist-item:last-child { border-bottom:none; }
+  .vlist-item:hover { background:#FAFAF5; }
+  .vav {
+    width:36px; height:36px; border-radius:9px;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-size:12px; flex-shrink:0;
+  }
+  .vinfo { flex:1; min-width:0; }
+  .vname { font-size:13px; font-weight:700; color:var(--sw-text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .vdetail { font-size:11px; color:var(--sw-text-muted); margin-top:2px; }
+  .vmeta { text-align:right; flex-shrink:0; }
+  .vamt { font-size:13.5px; font-weight:800; color:var(--sw-green-dark); }
+  .vtime { font-size:10.5px; color:var(--sw-text-muted); margin-top:2px; }
+  .sdot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .s-done { background:#27AE60; }
+  .s-pend { background:var(--sw-gold); }
+  .s-over { background:var(--sw-red); }
+  .s-plan { background:var(--sw-border); }
+
+  /* ── PIPELINE BARS ── */
+  .pipe-wrap { padding:16px 20px; }
+  .pipe-row { display:flex; align-items:center; gap:11px; margin-bottom:13px; }
+  .pipe-lbl { width:88px; font-size:11.5px; font-weight:600; color:var(--sw-text-mid); flex-shrink:0; }
+  .pipe-bg { flex:1; height:9px; background:var(--sw-parch); border-radius:20px; overflow:hidden; }
+  .pipe-fill { height:100%; border-radius:20px; }
+  .pipe-n { width:24px; font-size:12px; font-weight:800; color:var(--sw-green-dark); text-align:right; }
+  .pipe-v { width:52px; font-size:10.5px; color:var(--sw-text-muted); text-align:right; }
+
+  /* ── TARGET BAR ── */
+  .tgt-card { background:#fff; border-radius:14px; border:1px solid var(--sw-border); padding:18px 20px; margin-bottom:16px; }
+  .tgt-hd { display:flex; justify-content:space-between; align-items:center; margin-bottom:13px; }
+  .tgt-lbl { font-size:13.5px; font-weight:700; color:var(--sw-green-dark); }
+  .tgt-period { font-size:11px; color:var(--sw-text-muted); }
+  .tgt-bg { background:var(--sw-parch); border-radius:20px; height:12px; overflow:hidden; margin-bottom:9px; }
+  .tgt-fill { height:100%; border-radius:20px; background:linear-gradient(90deg,var(--sw-green),var(--sw-green-light)); }
+  .tgt-labels { display:flex; justify-content:space-between; font-size:11.5px; }
+  .tgt-done { color:var(--sw-green); font-weight:700; }
+  .tgt-goal { color:var(--sw-text-muted); }
+
+  /* ── PRODUCT GRID ── */
+  .prod-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .prod-card {
+    background:#fff; border-radius:14px; border:1px solid var(--sw-border);
+    padding:18px; cursor:pointer; transition:all .2s;
+  }
+  .prod-card:hover { transform:translateY(-3px); box-shadow:0 10px 26px rgba(27,77,46,.1); border-color:var(--sw-green-light); }
+  .prod-crop-img {
+    width:48px; height:48px; border-radius:12px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:28px; margin-bottom:12px;
+  }
+  .prod-tag {
+    display:inline-block; font-size:9.5px; font-weight:700;
+    text-transform:uppercase; letter-spacing:.7px;
+    padding:3px 9px; border-radius:20px; margin-bottom:10px;
+  }
+  .tag-f1    { background:var(--sw-green-pale); color:var(--sw-green); }
+  .tag-opv   { background:var(--sw-gold-pale); color:var(--sw-gold); }
+  .tag-trial { background:#EDE8F5; color:var(--sw-purple); }
+  .prod-name { font-size:14.5px; font-weight:700; color:var(--sw-green-dark); margin-bottom:4px; }
+  .prod-var  { font-size:11px; color:var(--sw-text-muted); margin-bottom:3px; }
+  .prod-sku  { font-size:10.5px; color:var(--sw-text-muted); margin-bottom:12px; }
+  .prod-traits { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:12px; }
+  .trait {
+    font-size:10px; font-weight:600; padding:2px 8px; border-radius:20px;
+    background:var(--sw-green-pale); color:var(--sw-green);
+  }
+  .prod-foot { display:flex; align-items:center; justify-content:space-between; }
+  .prod-price { font-family:'Playfair Display',serif; font-size:19px; font-weight:700; color:var(--sw-green-dark); }
+  .prod-price span { font-size:11px; font-family:'Plus Jakarta Sans',sans-serif; color:var(--sw-text-muted); font-weight:400; }
+  .stock-ok  { font-size:11px; font-weight:600; color:#27AE60; }
+  .stock-low { font-size:11px; font-weight:600; color:var(--sw-orange); }
+  .stock-out { font-size:11px; font-weight:600; color:var(--sw-red); }
+
+  /* ── EVENTS ── */
+  .events-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-bottom:20px; }
+  .event-card {
+    background:#fff; border-radius:14px; border:1px solid var(--sw-border); padding:18px;
+    display:flex; gap:16px; cursor:pointer; transition:all .18s;
+  }
+  .event-card:hover { border-color:var(--sw-green-light); box-shadow:0 6px 18px rgba(27,77,46,.08); }
+  .event-date {
+    min-width:52px; height:58px; border-radius:12px;
+    background:var(--sw-green-pale); border:1px solid #C2DFC9;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+  }
+  .ev-day { font-family:'Playfair Display',serif; font-size:24px; font-weight:700; color:var(--sw-green); line-height:1; }
+  .ev-mo  { font-size:10px; font-weight:700; text-transform:uppercase; color:var(--sw-text-muted); letter-spacing:.8px; }
+  .ev-info { flex:1; }
+  .ev-title { font-size:13.5px; font-weight:700; color:var(--sw-green-dark); margin-bottom:4px; }
+  .ev-loc   { font-size:11.5px; color:var(--sw-text-muted); margin-bottom:6px; }
+  .ev-tags  { display:flex; gap:6px; flex-wrap:wrap; }
+  .ev-tag   { font-size:10px; font-weight:600; padding:2px 8px; border-radius:20px; }
+  .evt-field   { background:var(--sw-green-pale); color:var(--sw-green); }
+  .evt-dist    { background:var(--sw-gold-pale); color:var(--sw-gold); }
+  .evt-seminar { background:#EDE8F5; color:var(--sw-purple); }
+  .evt-expo    { background:#E8F4FB; color:var(--sw-blue); }
+  .ev-upcoming { border-left:3px solid var(--sw-green); }
+  .ev-past     { opacity:.7; }
+
+  /* ── DEALER ── */
+  .dealer-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .dealer-card {
+    background:#fff; border-radius:14px; border:1px solid var(--sw-border); padding:18px;
+    cursor:pointer; transition:all .18s;
+  }
+  .dealer-card:hover { border-color:var(--sw-green-light); transform:translateY(-2px); }
+  .dealer-av {
+    width:42px; height:42px; border-radius:12px;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-size:15px; margin-bottom:12px;
+  }
+  .dealer-name { font-size:14px; font-weight:700; color:var(--sw-green-dark); margin-bottom:2px; }
+  .dealer-loc  { font-size:11.5px; color:var(--sw-text-muted); margin-bottom:8px; }
+  .dealer-state {
+    display:inline-block; font-size:10px; font-weight:700;
+    text-transform:uppercase; letter-spacing:.5px;
+    padding:3px 9px; border-radius:20px;
+    background:var(--sw-parch); color:var(--sw-text-mid);
+    margin-bottom:10px;
+  }
+  .dealer-stats { display:flex; gap:16px; padding-top:10px; border-top:1px solid var(--sw-border); }
+  .ds-item { }
+  .ds-val { font-size:15px; font-weight:800; color:var(--sw-green-dark); }
+  .ds-lbl { font-size:10px; color:var(--sw-text-muted); }
+  .dealer-status {
+    display:inline-flex; align-items:center; gap:4px;
+    font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:20px; margin-top:8px;
+  }
+  .ds-active   { background:var(--sw-green-pale); color:var(--sw-green); }
+  .ds-new      { background:var(--sw-gold-pale); color:var(--sw-gold); }
+  .ds-inactive { background:#F5E6E6; color:var(--sw-red); }
+
+  /* ── ATTENDANCE ── */
+  .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:7px; }
+  .cal-head { font-size:10.5px; font-weight:700; text-align:center; color:var(--sw-text-muted); padding:4px; }
+  .cal-day {
+    background:#fff; border:1px solid var(--sw-border); border-radius:9px;
+    padding:9px 6px; text-align:center; font-size:10px;
+  }
+  .cal-day .d-name { color:var(--sw-text-muted); font-size:9px; font-weight:600; }
+  .cal-day .d-num  { font-family:'Playfair Display',serif; font-size:17px; font-weight:700; color:var(--sw-green-dark); margin:2px 0; }
+  .cal-day .d-pip  { width:7px; height:7px; border-radius:50%; margin:0 auto; }
+  .cal-day.present { border-color:#A8D5B0; background:var(--sw-green-pale); }
+  .cal-day.absent  { border-color:#F5C0BC; background:#FFF5F5; }
+  .cal-day.leave   { border-color:#F5DFB0; background:var(--sw-gold-pale); }
+  .cal-day.today   { border-color:var(--sw-gold); background:var(--sw-gold-pale); box-shadow:0 0 0 2px rgba(212,134,10,.25); }
+  .pip-present { background:#27AE60; }
+  .pip-absent  { background:var(--sw-red); }
+  .pip-leave   { background:var(--sw-gold); }
+  .pip-today   { background:var(--sw-gold); }
+
+  /* ── ORDER CHIPS ── */
+  .ochip { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; }
+  .oc-confirm  { background:var(--sw-green-pale); color:var(--sw-green); }
+  .oc-dispatch { background:#E3F2FD; color:var(--sw-blue); }
+  .oc-pending  { background:var(--sw-gold-pale); color:var(--sw-gold); }
+  .oc-deliver  { background:#EDE8F5; color:var(--sw-purple); }
+
+  /* ── MAP MOCK ── */
+  .map-mock {
+    background:linear-gradient(135deg,#E6F0E8 0%,#D0E8D8 50%,#C2DDD0 100%);
+    border-radius:14px; border:1px solid #C2DDD0;
+    height:190px; position:relative; overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+    flex-direction:column; gap:7px; margin-bottom:16px;
+  }
+  .map-mock::before {
+    content:''; position:absolute; inset:0;
+    background:
+      radial-gradient(circle at 35% 55%, rgba(45,122,79,.15) 0%, transparent 45%),
+      radial-gradient(circle at 72% 35%, rgba(45,122,79,.1) 0%, transparent 40%);
+  }
+  .mdot { position:absolute; width:12px; height:12px; border-radius:50%; border:2px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,.2); }
+  .map-icon-big { font-size:30px; position:relative; z-index:1; }
+  .map-lbl { font-size:13px; font-weight:700; color:var(--sw-green); position:relative; z-index:1; }
+  .map-sub { font-size:11px; color:var(--sw-text-muted); position:relative; z-index:1; }
+
+  /* ── QUICK ACTIONS ── */
+  .qa-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:11px; margin-bottom:22px; }
+  .qa {
+    background:#fff; border:1.5px solid var(--sw-border); border-radius:12px;
+    padding:15px 10px; text-align:center; cursor:pointer; transition:all .18s;
+  }
+  .qa:hover { border-color:var(--sw-green-light); background:var(--sw-green-pale); transform:translateY(-2px); }
+  .qa-icon { font-size:22px; margin-bottom:7px; }
+  .qa-lbl  { font-size:11.5px; font-weight:600; color:var(--sw-text-mid); }
+
+  /* ── WATERMARK ── */
+  .wm {
+    position:fixed; bottom:14px; right:14px;
+    background:var(--sw-green-dark); color:var(--sw-green-light);
+    font-size:9.5px; font-weight:800; text-transform:uppercase; letter-spacing:1.8px;
+    padding:5px 13px; border-radius:20px; opacity:.85; z-index:9999;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="sb-brand">
+      <div class="sb-brand-row">
+        <div class="sb-logo">🌱</div>
+        <div>
+          <div class="sb-name">SeedWise</div>
+          <div class="sb-sub">Technologies</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sb-agent">
+      <div class="sb-av">AK</div>
+      <div class="sb-ag-name">Arjun Kumar</div>
+      <div class="sb-ag-role">Sales Executive · South India</div>
+      <div class="sb-ag-badge">🟢 On Field Today</div>
+    </div>
+
+    <div class="sb-section">Main</div>
+    <div class="sb-nav active" onclick="go(this,'dashboard')">
+      <span class="sb-nav-icon">📊</span> Dashboard
+    </div>
+    <div class="sb-nav" onclick="go(this,'visits')">
+      <span class="sb-nav-icon">🗺️</span> Field Visits
+      <span class="sb-badge">4</span>
+    </div>
+    <div class="sb-nav" onclick="go(this,'pipeline')">
+      <span class="sb-nav-icon">📈</span> Sales Pipeline
+    </div>
+
+    <div class="sb-section">Catalogue</div>
+    <div class="sb-nav" onclick="go(this,'catalogue')">
+      <span class="sb-nav-icon">🌾</span> F1 Seed Catalogue
+    </div>
+    <div class="sb-nav" onclick="go(this,'orders')">
+      <span class="sb-nav-icon">📦</span> Orders
+      <span class="sb-badge">6</span>
+    </div>
+    <div class="sb-nav" onclick="go(this,'dealers')">
+      <span class="sb-nav-icon">🤝</span> Dealers
+    </div>
+
+    <div class="sb-section">Outreach</div>
+    <div class="sb-nav" onclick="go(this,'events')">
+      <span class="sb-nav-icon">📅</span> Events & Meets
+      <span class="sb-badge">2</span>
+    </div>
+
+    <div class="sb-section">HR</div>
+    <div class="sb-nav" onclick="go(this,'attendance')">
+      <span class="sb-nav-icon">🗓️</span> Attendance
+    </div>
+    <div class="sb-nav" onclick="go(this,'targets')">
+      <span class="sb-nav-icon">🎯</span> My Targets
+    </div>
+
+    <div class="sb-foot">
+      <div class="sb-sync"><div class="sb-sync-dot"></div> Synced · just now</div>
+      <div class="sb-iso">ISO 9001:2015 Certified</div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="tb-title" id="tb-title">Good Morning, Arjun 👋</div>
+        <div class="tb-sub"  id="tb-sub">Friday, 6 Jun 2025 · Bangalore North Zone · Karnataka</div>
+      </div>
+      <div class="tb-right">
+        <div class="weather-pill">⛅ 29°C · Bangalore</div>
+        <div class="notif">🔔<div class="notif-dot">3</div></div>
+        <button class="btn btn-primary" onclick="alert('Check-In recorded at 8:52 AM ✅\nLocation: Yelahanka, Bangalore')">📍 Check In</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ══ DASHBOARD ══ -->
+      <div class="panel active" id="panel-dashboard">
+        <div class="tab-row">
+          <button class="tab active" onclick="swTab(this)">Today</button>
+          <button class="tab" onclick="swTab(this)">This Week</button>
+          <button class="tab" onclick="swTab(this)">This Month</button>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat">
+            <div class="stat-icon">🌱</div>
+            <div class="stat-lbl">Visits Done</div>
+            <div class="stat-val">6</div>
+            <div class="stat-delta up">↑ 1 vs yesterday</div>
+          </div>
+          <div class="stat">
+            <div class="stat-icon">💰</div>
+            <div class="stat-lbl">Orders Value</div>
+            <div class="stat-val">₹92K</div>
+            <div class="stat-delta up">↑ 18% vs last week</div>
+          </div>
+          <div class="stat">
+            <div class="stat-icon">🤝</div>
+            <div class="stat-lbl">Active Leads</div>
+            <div class="stat-val">19</div>
+            <div class="stat-delta neutral">→ Same as yesterday</div>
+          </div>
+          <div class="stat">
+            <div class="stat-icon">📦</div>
+            <div class="stat-lbl">Pending Orders</div>
+            <div class="stat-val">6</div>
+            <div class="stat-delta down">↑ 3 need action</div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <!-- Visits -->
+          <div class="card">
+            <div class="card-hd">
+              <div class="card-title">📋 Today's Visit Plan</div>
+              <span class="card-action" onclick="go(document.querySelectorAll('.sb-nav')[1],'visits')">See all →</span>
+            </div>
+            <div>
+              <div class="vlist-item">
+                <div class="vav" style="background:#E6F5EC;color:var(--sw-green)">SR</div>
+                <div class="vinfo">
+                  <div class="vname">Srinivasa Reddy Agro</div>
+                  <div class="vdetail">📍 Yelahanka · F1 SATHVIK Tomato demo + order</div>
+                </div>
+                <div class="sdot s-done"></div>
+                <div class="vmeta"><div class="vamt">₹24,600</div><div class="vtime">Done 9:15 AM</div></div>
+              </div>
+              <div class="vlist-item">
+                <div class="vav" style="background:#FFF8E6;color:var(--sw-gold)">KS</div>
+                <div class="vinfo">
+                  <div class="vname">Krishnappa Seeds Pvt.</div>
+                  <div class="vdetail">📍 Doddaballapur · Ridge Gourd & Cucumber bulk</div>
+                </div>
+                <div class="sdot s-done"></div>
+                <div class="vmeta"><div class="vamt">₹38,200</div><div class="vtime">Done 11:30 AM</div></div>
+              </div>
+              <div class="vlist-item">
+                <div class="vav" style="background:#E8F4FB;color:var(--sw-blue)">MF</div>
+                <div class="vinfo">
+                  <div class="vname">Manjunath Farms</div>
+                  <div class="vdetail">📍 Devanahalli · Cauliflower hybrid trial demo</div>
+                </div>
+                <div class="sdot s-pend"></div>
+                <div class="vmeta"><div class="vamt">—</div><div class="vtime">2:30 PM</div></div>
+              </div>
+              <div class="vlist-item">
+                <div class="vav" style="background:#F5E6E6;color:var(--sw-red)">GB</div>
+                <div class="vinfo">
+                  <div class="vname">Gangamma & Bros.</div>
+                  <div class="vdetail">📍 Yelahanka · Overdue collection ₹44K</div>
+                </div>
+                <div class="sdot s-over"></div>
+                <div class="vmeta"><div class="vamt">₹44,000</div><div class="vtime">Overdue ⚠️</div></div>
+              </div>
+              <div class="vlist-item">
+                <div class="vav" style="background:#EDE8F5;color:var(--sw-purple)">RP</div>
+                <div class="vinfo">
+                  <div class="vname">Ramu Patil Agri Store</div>
+                  <div class="vdetail">📍 Hesaraghatta · New dealer onboarding</div>
+                </div>
+                <div class="sdot s-plan"></div>
+                <div class="vmeta"><div class="vamt">—</div><div class="vtime">4:00 PM</div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right col -->
+          <div>
+            <div class="card" style="margin-bottom:16px">
+              <div class="card-hd">
+                <div class="card-title">📈 Pipeline Summary</div>
+                <span class="card-action">Manage →</span>
+              </div>
+              <div class="pipe-wrap">
+                <div class="pipe-row">
+                  <div class="pipe-lbl">Prospect</div>
+                  <div class="pipe-bg"><div class="pipe-fill" style="width:100%;background:var(--sw-blue)"></div></div>
+                  <div class="pipe-n">11</div>
+                  <div class="pipe-v">₹2.8L</div>
+                </div>
+                <div class="pipe-row">
+                  <div class="pipe-lbl">Demo Done</div>
+                  <div class="pipe-bg"><div class="pipe-fill" style="width:63%;background:var(--sw-gold)"></div></div>
+                  <div class="pipe-n">7</div>
+                  <div class="pipe-v">₹1.6L</div>
+                </div>
+                <div class="pipe-row">
+                  <div class="pipe-lbl">Negotiation</div>
+                  <div class="pipe-bg"><div class="pipe-fill" style="width:36%;background:var(--sw-orange)"></div></div>
+                  <div class="pipe-n">4</div>
+                  <div class="pipe-v">₹98K</div>
+                </div>
+                <div class="pipe-row">
+                  <div class="pipe-lbl">Won (Jun)</div>
+                  <div class="pipe-bg"><div class="pipe-fill" style="width:22%;background:var(--sw-green)"></div></div>
+                  <div class="pipe-n">2</div>
+                  <div class="pipe-v">₹62K</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tgt-card">
+              <div class="tgt-hd">
+                <div class="tgt-lbl">🎯 Monthly Target · Jun 2025</div>
+                <div class="tgt-period">Bangalore North</div>
+              </div>
+              <div class="tgt-bg"><div class="tgt-fill" style="width:72%;animation:none"></div></div>
+              <div class="tgt-labels">
+                <div class="tgt-done">₹2,88,000 achieved</div>
+                <div class="tgt-goal">Goal: ₹4,00,000</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="qa-grid">
+          <div class="qa" onclick="alert('Log Visit form opened')"><div class="qa-icon">📝</div><div class="qa-lbl">Log Visit</div></div>
+          <div class="qa" onclick="alert('New Seed Order form opened')"><div class="qa-icon">🛒</div><div class="qa-lbl">New Order</div></div>
+          <div class="qa" onclick="go(document.querySelectorAll('.sb-nav')[8],'events')"><div class="qa-icon">📅</div><div class="qa-lbl">Schedule Meet</div></div>
+          <div class="qa" onclick="alert('Dealer enquiry form opened')"><div class="qa-icon">🤝</div><div class="qa-lbl">Add Dealer</div></div>
+        </div>
+      </div>
+
+      <!-- ══ VISITS ══ -->
+      <div class="panel" id="panel-visits">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--sw-green-dark)">Field Visits</div>
+            <div style="font-size:11.5px;color:var(--sw-text-muted);margin-top:3px">Bangalore North Zone · South India Territory</div>
+          </div>
+          <button class="btn btn-primary" onclick="alert('Log Visit form opened')">+ Log Visit</button>
+        </div>
+        <div class="map-mock">
+          <div class="mdot" style="top:38%;left:30%;background:var(--sw-green)"></div>
+          <div class="mdot" style="top:55%;left:52%;background:var(--sw-gold)"></div>
+          <div class="mdot" style="top:28%;left:65%;background:var(--sw-red)"></div>
+          <div class="mdot" style="top:62%;left:40%;background:var(--sw-green)"></div>
+          <div class="mdot" style="top:44%;left:72%;background:var(--sw-border)"></div>
+          <div class="map-icon-big">🗺️</div>
+          <div class="map-lbl">Live Field Map · Bangalore North & Surrounding</div>
+          <div class="map-sub">5 visits plotted · GPS tracking active · Karnataka</div>
+        </div>
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-title">📋 Today's Visits (5)</div>
+            <span class="card-action">View History →</span>
+          </div>
+          <div>
+            <div class="vlist-item"><div class="vav" style="background:#E6F5EC;color:var(--sw-green)">SR</div><div class="vinfo"><div class="vname">Srinivasa Reddy Agro · Yelahanka</div><div class="vdetail">F1 SATHVIK Tomato demo — 20 pkt order confirmed</div></div><div class="sdot s-done"></div><div class="vmeta"><div class="vamt">₹24,600</div><div class="vtime">9:15 AM ✅</div></div></div>
+            <div class="vlist-item"><div class="vav" style="background:#FFF8E6;color:var(--sw-gold)">KS</div><div class="vinfo"><div class="vname">Krishnappa Seeds Pvt. · Doddaballapur</div><div class="vdetail">Ridge Gourd F1 + Cucumber F1 — bulk dealer order</div></div><div class="sdot s-done"></div><div class="vmeta"><div class="vamt">₹38,200</div><div class="vtime">11:30 AM ✅</div></div></div>
+            <div class="vlist-item"><div class="vav" style="background:#E8F4FB;color:var(--sw-blue)">MF</div><div class="vinfo"><div class="vname">Manjunath Farms · Devanahalli</div><div class="vdetail">Cauliflower F1 hybrid trial — agronomist demo planned</div></div><div class="sdot s-pend"></div><div class="vmeta"><div class="vamt">—</div><div class="vtime">2:30 PM ⏳</div></div></div>
+            <div class="vlist-item"><div class="vav" style="background:#F5E6E6;color:var(--sw-red)">GB</div><div class="vinfo"><div class="vname">Gangamma & Bros. · Yelahanka</div><div class="vdetail">Outstanding payment follow-up — escalated to manager</div></div><div class="sdot s-over"></div><div class="vmeta"><div class="vamt">₹44,000</div><div class="vtime">Overdue ⚠️</div></div></div>
+            <div class="vlist-item"><div class="vav" style="background:#EDE8F5;color:var(--sw-purple)">RP</div><div class="vinfo"><div class="vname">Ramu Patil Agri Store · Hesaraghatta</div><div class="vdetail">New dealer onboarding — margin system briefing</div></div><div class="sdot s-plan"></div><div class="vmeta"><div class="vamt">—</div><div class="vtime">4:00 PM 📅</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PIPELINE ══ -->
+      <div class="panel" id="panel-pipeline">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--sw-green-dark)">Sales Pipeline</div>
+            <div style="font-size:11.5px;color:var(--sw-text-muted);margin-top:3px">24 active leads · ₹5.5L total pipeline value · South India</div>
+          </div>
+          <button class="btn btn-primary">+ Add Lead</button>
+        </div>
+        <div class="stats-row">
+          <div class="stat"><div class="stat-icon">🎯</div><div class="stat-lbl">Prospects</div><div class="stat-val">11</div><div class="stat-delta neutral">₹2.8L value</div></div>
+          <div class="stat"><div class="stat-icon">🌱</div><div class="stat-lbl">Demo Done</div><div class="stat-val">7</div><div class="stat-delta up">₹1.6L value</div></div>
+          <div class="stat"><div class="stat-icon">💬</div><div class="stat-lbl">Negotiation</div><div class="stat-val">4</div><div class="stat-delta neutral">₹98K value</div></div>
+          <div class="stat"><div class="stat-icon">✅</div><div class="stat-lbl">Won (Jun)</div><div class="stat-val">2</div><div class="stat-delta up">₹62K closed</div></div>
+        </div>
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-title">🏆 Top Prospects</div>
+            <span class="card-action">Full Pipeline →</span>
+          </div>
+          <div>
+            <div class="vlist-item"><div class="vav" style="background:#E6F5EC;color:var(--sw-green);font-size:11px">KS</div><div class="vinfo"><div class="vname">Krishnappa Seeds Pvt. · Doddaballapur</div><div class="vdetail">Interest: Full F1 veg portfolio — Ridge Gourd, Sponge Gourd, Cucumber</div></div><span class="ochip oc-dispatch">Demo Done</span><div class="vmeta"><div class="vamt">₹1.2L</div><div class="vtime">🔥 Hot</div></div></div>
+            <div class="vlist-item"><div class="vav" style="background:#FFF8E6;color:var(--sw-gold);font-size:11px">PA</div><div class="vinfo"><div class="vname">Patel Agro Ventures · Tumkur</div><div class="vdetail">Tomato F1 SATHVIK bulk trial — 3 season potential</div></div><span class="ochip oc-pending">Negotiation</span><div class="vmeta"><div class="vamt">₹86K</div><div class="vtime">🌤 Warm</div></div></div>
+            <div class="vlist-item"><div class="vav" style="background:#EDE8F5;color:var(--sw-purple);font-size:11px">RS</div><div class="vinfo"><div class="vname">Ramu Seeds Store · Hesaraghatta</div><div class="vdetail">New dealer — full catalogue stocking request</div></div><span class="ochip" style="background:var(--sw-green-pale);color:var(--sw-green)">Prospect</span><div class="vmeta"><div class="vamt">₹2.0L</div><div class="vtime">🌤 Warm</div></div></div>
+            <div class="vlist-item"><div class="vav" style="background:#E8F4FB;color:var(--sw-blue);font-size:11px">MF</div><div class="vinfo"><div class="vname">Manjunath Farms · Devanahalli</div><div class="vdetail">Cauliflower hybrid trial — awaiting agronomist report</div></div><span class="ochip oc-dispatch">Demo Done</span><div class="vmeta"><div class="vamt">₹48K</div><div class="vtime">🌤 Warm</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ CATALOGUE ══ -->
+      <div class="panel" id="panel-catalogue">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--sw-green-dark)">F1 Hybrid Seed Catalogue</div>
+            <div style="font-size:11.5px;color:var(--sw-text-muted);margin-top:3px">67+ varieties · 98% genetic purity · ISO 9001:2015 certified</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <div class="tab-row" style="margin-bottom:0">
+              <button class="tab active" onclick="swTab(this)">All</button>
+              <button class="tab" onclick="swTab(this)">Tomato</button>
+              <button class="tab" onclick="swTab(this)">Gourd</button>
+              <button class="tab" onclick="swTab(this)">Cucumber</button>
+              <button class="tab" onclick="swTab(this)">Cauliflower</button>
+            </div>
+          </div>
+        </div>
+        <div class="prod-grid">
+          <!-- F1 SATHVIK -->
+          <div class="prod-card">
+            <div class="prod-crop-img" style="background:#E6F5EC">🍅</div>
+            <div class="prod-tag tag-f1">F1 Hybrid</div>
+            <div class="prod-name">F1 SATHVIK</div>
+            <div class="prod-var">Determinant Tomato · Certified Hybrid</div>
+            <div class="prod-sku">SKU: SW-TOM-SATHVIK-10G</div>
+            <div class="prod-traits">
+              <span class="trait">ToLCV Resistant</span>
+              <span class="trait">Heat Tolerant</span>
+              <span class="trait">Thick Skin</span>
+            </div>
+            <div class="prod-foot">
+              <div class="prod-price">₹680 <span>/10g pkt</span></div>
+              <div class="stock-ok">● In Stock (340)</div>
+            </div>
+          </div>
+          <!-- Ridge Gourd -->
+          <div class="prod-card">
+            <div class="prod-crop-img" style="background:#E6F5EC">🥒</div>
+            <div class="prod-tag tag-f1">F1 Hybrid</div>
+            <div class="prod-name">RG-Premier F1</div>
+            <div class="prod-var">Ridge Gourd · First Launch Variety</div>
+            <div class="prod-sku">SKU: SW-RG-PREM-5G</div>
+            <div class="prod-traits">
+              <span class="trait">High Yield</span>
+              <span class="trait">Monsoon Ready</span>
+            </div>
+            <div class="prod-foot">
+              <div class="prod-price">₹520 <span>/5g pkt</span></div>
+              <div class="stock-ok">● In Stock (210)</div>
+            </div>
+          </div>
+          <!-- Sponge Gourd -->
+          <div class="prod-card">
+            <div class="prod-crop-img" style="background:#E6F5EC">🌿</div>
+            <div class="prod-tag tag-f1">F1 Hybrid</div>
+            <div class="prod-name">SG-Surya F1</div>
+            <div class="prod-var">Sponge Gourd · Karnataka Special</div>
+            <div class="prod-sku">SKU: SW-SG-SURYA-5G</div>
+            <div class="prod-traits">
+              <span class="trait">Early Maturity</span>
+              <span class="trait">Uniform Fruit</span>
+            </div>
+            <div class="prod-foot">
+              <div class="prod-price">₹490 <span>/5g pkt</span></div>
+              <div class="stock-low">⚠ Low Stock (22)</div>
+            </div>
+          </div>
+          <!-- Cucumber -->
+          <div class="prod-card">
+            <div class="prod-crop-img" style="background:#E8F4FB">🥒</div>
+            <div class="prod-tag tag-f1">F1 Hybrid</div>
+            <div class="prod-name">CU-Shakthi F1</div>
+            <div class="prod-var">Cucumber · South India Adapted</div>
+            <div class="prod-sku">SKU: SW-CUC-SHAK-10G</div>
+            <div class="prod-traits">
+              <span class="trait">Thrips Resistant</span>
+              <span class="trait">Long Shelf Life</span>
+            </div>
+            <div class="prod-foot">
+              <div class="prod-price">₹740 <span>/10g pkt</span></div>
+              <div class="stock-ok">● In Stock (180)</div>
+            </div>
+          </div>
+          <!-- Cauliflower -->
+          <div class="prod-card">
+            <div class="prod-crop-img" style="background:#FFF8E6">🥦</div>
+            <div class="prod-tag tag-f1">F1 Hybrid</div>
+            <div class="prod-name">CF-Himgiri F1</div>
+            <div class="prod-var">Cauliflower · North & South India</div>
+            <div class="prod-sku">SKU: SW-CAU-HIMGIRI-10G</div>
+            <div class="prod-traits">
+              <span class="trait">Dense Curd</span>
+              <span class="trait">Drought Tolerant</span>
+            </div>
+            <div class="prod-foot">
+              <div class="prod-price">₹860 <span>/10g pkt</span></div>
+              <div class="stock-ok">● In Stock (95)</div>
+            </div>
+          </div>
+          <!-- Trial -->
+          <div class="prod-card">
+            <div class="prod-crop-img" style="background:#EDE8F5">🔬</div>
+            <div class="prod-tag tag-trial">R&D Trial</div>
+            <div class="prod-name">BitterG-X12 Trial</div>
+            <div class="prod-var">Bitter Gourd · Hubli Trial Center</div>
+            <div class="prod-sku">SKU: SW-BG-X12-TRIAL</div>
+            <div class="prod-traits">
+              <span class="trait" style="background:#EDE8F5;color:var(--sw-purple)">Marker Selected</span>
+              <span class="trait" style="background:#EDE8F5;color:var(--sw-purple)">Pedigree Tested</span>
+            </div>
+            <div class="prod-foot">
+              <div class="prod-price">—</div>
+              <div style="font-size:11px;font-weight:600;color:var(--sw-purple)">🔬 Trial Only</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ORDERS ══ -->
+      <div class="panel" id="panel-orders">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+          <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--sw-green-dark)">Orders</div>
+          <button class="btn btn-primary">+ New Order</button>
+        </div>
+        <div class="stats-row" style="margin-bottom:18px">
+          <div class="stat"><div class="stat-icon">⏳</div><div class="stat-lbl">Pending</div><div class="stat-val">6</div><div class="stat-delta down">₹1.4L value</div></div>
+          <div class="stat"><div class="stat-icon">🚚</div><div class="stat-lbl">Dispatched</div><div class="stat-val">4</div><div class="stat-delta up">₹92K en route</div></div>
+          <div class="stat"><div class="stat-icon">✅</div><div class="stat-lbl">Delivered</div><div class="stat-val">18</div><div class="stat-delta up">This month</div></div>
+          <div class="stat"><div class="stat-icon">💰</div><div class="stat-lbl">Total Value</div><div class="stat-val">₹4.8L</div><div class="stat-delta up">Jun 2025</div></div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">📦 Recent Orders</div><span class="card-action">View All →</span></div>
+          <div>
+            <div class="vlist-item"><div class="vav" style="background:#E6F5EC;color:var(--sw-green)">SR</div><div class="vinfo"><div class="vname">Srinivasa Reddy Agro</div><div class="vdetail">F1 SATHVIK Tomato × 20 pkts — Yelahanka</div></div><span class="ochip oc-confirm">● Confirmed</span><div class="vmeta"><div class="vamt">₹13,600</div><div class="vtime">Today</div></div></div>
+            <div class="vlist-item"><div class="vav" style="background:#FFF8E6;color:var(--sw-gold)">KS</div><div class="vinfo"><div class="vname">Krishnappa Seeds Pvt.</div><div class="vdetail">RG-Premier F1 × 30 + CU-Shakthi F1 × 15 pkts</div></div><span class="ochip oc-dispatch">🚚 Dispatched</span><div class="vmeta"><div class="vamt">₹26,700</div><div class="vtime">Yesterday</div></div></div>
+            <div class="vlist-item"><div class="vav" style="background:#EDE8F5;color:var(--sw-purple)">RP</div><div class="vinfo"><div class="vname">Ramu Patil Agri Store</div><div class="vdetail">CF-Himgiri F1 × 12 pkts — new dealer first order</div></div><span class="ochip oc-pending">⏳ Pending</span><div class="vmeta"><div class="vamt">₹10,320</div><div class="vtime">2 days ago</div></div></div>
+            <div class="vlist-item"><div class="vav" style="background:#E8F4FB;color:var(--sw-blue)">PA</div><div class="vinfo"><div class="vname">Patel Agro Ventures · Tumkur</div><div class="vdetail">F1 SATHVIK × 50 pkts — Rabi season bulk</div></div><span class="ochip oc-pending">⏳ Pending</span><div class="vmeta"><div class="vamt">₹34,000</div><div class="vtime">3 days ago</div></div></div>
+            <div class="vlist-item"><div class="vav" style="background:#E6F5EC;color:var(--sw-green)">MF</div><div class="vinfo"><div class="vname">Manjunath Farms · Devanahalli</div><div class="vdetail">SG-Surya F1 × 8 pkts — trial field sowing</div></div><span class="ochip oc-deliver" style="background:#EDE8F5;color:var(--sw-purple)">✓ Delivered</span><div class="vmeta"><div class="vamt">₹3,920</div><div class="vtime">5 days ago</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ DEALERS ══ -->
+      <div class="panel" id="panel-dealers">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--sw-green-dark)">Authorized Dealers</div>
+            <div style="font-size:11.5px;color:var(--sw-text-muted);margin-top:3px">Dynamic margin system · Training aids · Farmer advisory support</div>
+          </div>
+          <button class="btn btn-gold" onclick="alert('New Dealer Enquiry form opened')">+ Add Dealer</button>
+        </div>
+        <div class="stats-row" style="margin-bottom:18px">
+          <div class="stat"><div class="stat-icon">🤝</div><div class="stat-lbl">Active Dealers</div><div class="stat-val">14</div><div class="stat-delta up">South India</div></div>
+          <div class="stat"><div class="stat-icon">📍</div><div class="stat-lbl">States Covered</div><div class="stat-val">6</div><div class="stat-delta up">+2 this quarter</div></div>
+          <div class="stat"><div class="stat-icon">🆕</div><div class="stat-lbl">New Enquiries</div><div class="stat-val">3</div><div class="stat-delta neutral">Pending review</div></div>
+          <div class="stat"><div class="stat-icon">💰</div><div class="stat-lbl">Dealer Revenue</div><div class="stat-val">₹18L</div><div class="stat-delta up">↑ Jun 2025</div></div>
+        </div>
+        <div class="dealer-grid">
+          <div class="dealer-card">
+            <div class="dealer-av" style="background:#E6F5EC;color:var(--sw-green)">KS</div>
+            <div class="dealer-name">Krishnappa Seeds Pvt.</div>
+            <div class="dealer-loc">📍 Doddaballapur, Karnataka</div>
+            <div class="dealer-state">Karnataka</div>
+            <div class="dealer-status ds-active">● Active</div>
+            <div class="dealer-stats">
+              <div class="ds-item"><div class="ds-val">₹3.8L</div><div class="ds-lbl">This Month</div></div>
+              <div class="ds-item"><div class="ds-val">12</div><div class="ds-lbl">Orders</div></div>
+              <div class="ds-item"><div class="ds-val">3yr</div><div class="ds-lbl">Partner</div></div>
+            </div>
+          </div>
+          <div class="dealer-card">
+            <div class="dealer-av" style="background:#FFF8E6;color:var(--sw-gold)">SR</div>
+            <div class="dealer-name">Srinivasa Reddy Agro</div>
+            <div class="dealer-loc">📍 Yelahanka, Bangalore</div>
+            <div class="dealer-state">Karnataka</div>
+            <div class="dealer-status ds-active">● Active</div>
+            <div class="dealer-stats">
+              <div class="ds-item"><div class="ds-val">₹2.4L</div><div class="ds-lbl">This Month</div></div>
+              <div class="ds-item"><div class="ds-val">8</div><div class="ds-lbl">Orders</div></div>
+              <div class="ds-item"><div class="ds-val">2yr</div><div class="ds-lbl">Partner</div></div>
+            </div>
+          </div>
+          <div class="dealer-card">
+            <div class="dealer-av" style="background:#E8F4FB;color:var(--sw-blue)">PA</div>
+            <div class="dealer-name">Patel Agro Ventures</div>
+            <div class="dealer-loc">📍 Tumkur, Karnataka</div>
+            <div class="dealer-state">Karnataka</div>
+            <div class="dealer-status ds-active">● Active</div>
+            <div class="dealer-stats">
+              <div class="ds-item"><div class="ds-val">₹1.9L</div><div class="ds-lbl">This Month</div></div>
+              <div class="ds-item"><div class="ds-val">6</div><div class="ds-lbl">Orders</div></div>
+              <div class="ds-item"><div class="ds-val">1yr</div><div class="ds-lbl">Partner</div></div>
+            </div>
+          </div>
+          <div class="dealer-card">
+            <div class="dealer-av" style="background:#EDE8F5;color:var(--sw-purple)">RP</div>
+            <div class="dealer-name">Ramu Patil Agri Store</div>
+            <div class="dealer-loc">📍 Hesaraghatta, Bangalore</div>
+            <div class="dealer-state">Karnataka</div>
+            <div class="dealer-status ds-new">🆕 New</div>
+            <div class="dealer-stats">
+              <div class="ds-item"><div class="ds-val">₹10K</div><div class="ds-lbl">First Order</div></div>
+              <div class="ds-item"><div class="ds-val">1</div><div class="ds-lbl">Orders</div></div>
+              <div class="ds-item"><div class="ds-val">New</div><div class="ds-lbl">Partner</div></div>
+            </div>
+          </div>
+          <div class="dealer-card">
+            <div class="dealer-av" style="background:var(--sw-green-pale);color:var(--sw-green)">VA</div>
+            <div class="dealer-name">Venkat Agri Solutions</div>
+            <div class="dealer-loc">📍 Chennai, Tamil Nadu</div>
+            <div class="dealer-state">Tamil Nadu</div>
+            <div class="dealer-status ds-active">● Active</div>
+            <div class="dealer-stats">
+              <div class="ds-item"><div class="ds-val">₹2.1L</div><div class="ds-lbl">This Month</div></div>
+              <div class="ds-item"><div class="ds-val">7</div><div class="ds-lbl">Orders</div></div>
+              <div class="ds-item"><div class="ds-val">2yr</div><div class="ds-lbl">Partner</div></div>
+            </div>
+          </div>
+          <div class="dealer-card">
+            <div class="dealer-av" style="background:#F5E6E6;color:var(--sw-red)">GB</div>
+            <div class="dealer-name">Gangamma & Bros.</div>
+            <div class="dealer-loc">📍 Yelahanka, Bangalore</div>
+            <div class="dealer-state">Karnataka</div>
+            <div class="dealer-status ds-inactive">⚠ Review</div>
+            <div class="dealer-stats">
+              <div class="ds-item"><div class="ds-val">₹44K</div><div class="ds-lbl">Outstanding</div></div>
+              <div class="ds-item"><div class="ds-val">3</div><div class="ds-lbl">Orders</div></div>
+              <div class="ds-item"><div class="ds-val">1yr</div><div class="ds-lbl">Partner</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ EVENTS ══ -->
+      <div class="panel" id="panel-events">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--sw-green-dark)">Events & Outreach Meets</div>
+            <div style="font-size:11.5px;color:var(--sw-text-muted);margin-top:3px">Farmer seminars · Field demos · Distributor meets · Agro expos</div>
+          </div>
+          <button class="btn btn-primary" onclick="alert('Schedule new Event/Meet form opened')">+ Schedule Meet</button>
+        </div>
+        <div class="tab-row">
+          <button class="tab active" onclick="swTab(this)">Upcoming</button>
+          <button class="tab" onclick="swTab(this)">Past Events</button>
+          <button class="tab" onclick="swTab(this)">Field Meets</button>
+        </div>
+        <div style="margin-bottom:14px;font-size:12px;font-weight:600;color:var(--sw-text-muted);text-transform:uppercase;letter-spacing:.8px">Upcoming (2)</div>
+        <div class="events-grid">
+          <div class="event-card ev-upcoming">
+            <div class="event-date"><div class="ev-day">14</div><div class="ev-mo">Jun</div></div>
+            <div class="ev-info">
+              <div class="ev-title">F1 SATHVIK Tomato Field Demonstration</div>
+              <div class="ev-loc">📍 Doddaballapur, Bangalore Rural · Karnataka</div>
+              <div class="ev-tags">
+                <span class="ev-tag evt-field">Field Meet</span>
+                <span class="ev-tag evt-dist">Dealer Invite</span>
+              </div>
+            </div>
+          </div>
+          <div class="event-card ev-upcoming">
+            <div class="event-date"><div class="ev-day">22</div><div class="ev-mo">Jun</div></div>
+            <div class="ev-info">
+              <div class="ev-title">South India Distributor Meet 2025</div>
+              <div class="ev-loc">📍 Yelahanka Upanagar, Bangalore · Karnataka</div>
+              <div class="ev-tags">
+                <span class="ev-tag evt-dist">Distributor Meet</span>
+                <span class="ev-tag evt-seminar">Training</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:14px;font-size:12px;font-weight:600;color:var(--sw-text-muted);text-transform:uppercase;letter-spacing:.8px">Past Events</div>
+        <div class="events-grid">
+          <div class="event-card ev-past">
+            <div class="event-date" style="background:var(--sw-parch);border-color:var(--sw-border)"><div class="ev-day" style="color:var(--sw-text-muted)">28</div><div class="ev-mo">May</div></div>
+            <div class="ev-info">
+              <div class="ev-title">Farmer Seminar — Gourd Hybrids</div>
+              <div class="ev-loc">📍 Tumkur, Karnataka · 42 farmers attended</div>
+              <div class="ev-tags">
+                <span class="ev-tag evt-seminar">Seminar</span>
+                <span class="ev-tag" style="background:#E6F5EC;color:var(--sw-green)">42 Farmers</span>
+              </div>
+            </div>
+          </div>
+          <div class="event-card ev-past">
+            <div class="event-date" style="background:var(--sw-parch);border-color:var(--sw-border)"><div class="ev-day" style="color:var(--sw-text-muted)">15</div><div class="ev-mo">May</div></div>
+            <div class="ev-info">
+              <div class="ev-title">Agri Expo — Bangalore Horticulture</div>
+              <div class="ev-loc">📍 GKVK Campus, Bangalore · Stall #24</div>
+              <div class="ev-tags">
+                <span class="ev-tag evt-expo">Expo</span>
+                <span class="ev-tag" style="background:#E6F5EC;color:var(--sw-green)">120+ Leads</span>
+              </div>
+            </div>
+          </div>
+          <div class="event-card ev-past">
+            <div class="event-date" style="background:var(--sw-parch);border-color:var(--sw-border)"><div class="ev-day" style="color:var(--sw-text-muted)">02</div><div class="ev-mo">May</div></div>
+            <div class="ev-info">
+              <div class="ev-title">Ridge Gourd Trial Demo — Karnataka</div>
+              <div class="ev-loc">📍 Hesaraghatta, Bangalore · Trial field</div>
+              <div class="ev-tags">
+                <span class="ev-tag evt-field">Field Demo</span>
+                <span class="ev-tag" style="background:#E6F5EC;color:var(--sw-green)">18 Dealers</span>
+              </div>
+            </div>
+          </div>
+          <div class="event-card ev-past">
+            <div class="event-date" style="background:var(--sw-parch);border-color:var(--sw-border)"><div class="ev-day" style="color:var(--sw-text-muted)">18</div><div class="ev-mo">Apr</div></div>
+            <div class="ev-info">
+              <div class="ev-title">North India Market Entry Meet</div>
+              <div class="ev-loc">📍 Nagpur, Maharashtra · New territory</div>
+              <div class="ev-tags">
+                <span class="ev-tag evt-dist">Distributor Meet</span>
+                <span class="ev-tag evt-expo">Expansion</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ATTENDANCE ══ -->
+      <div class="panel" id="panel-attendance">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--sw-green-dark)">Attendance · June 2025</div>
+            <div style="font-size:11.5px;color:var(--sw-text-muted);margin-top:3px">Arjun Kumar · Sales Executive · Bangalore North</div>
+          </div>
+          <button class="btn btn-primary" onclick="alert('Check-In recorded at 8:52 AM ✅')">📍 Mark Today</button>
+        </div>
+        <div class="stats-row" style="margin-bottom:20px">
+          <div class="stat"><div class="stat-icon">✅</div><div class="stat-lbl">Present Days</div><div class="stat-val">20</div><div class="stat-delta up">90.9% this month</div></div>
+          <div class="stat"><div class="stat-icon">⏱️</div><div class="stat-lbl">Avg Field Hrs</div><div class="stat-val">7.8h</div><div class="stat-delta up">↑ vs 7h target</div></div>
+          <div class="stat"><div class="stat-icon">🌴</div><div class="stat-lbl">Leaves Taken</div><div class="stat-val">1</div><div class="stat-delta neutral">7 remaining</div></div>
+          <div class="stat"><div class="stat-icon">📍</div><div class="stat-lbl">Km Covered</div><div class="stat-val">342</div><div class="stat-delta up">↑ 8% vs May</div></div>
+        </div>
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-title">📅 June 2025 Calendar</div>
+            <span class="card-action">Export Report →</span>
+          </div>
+          <div style="padding:18px">
+            <div class="cal-grid" style="margin-bottom:8px">
+              <div class="cal-head">Mon</div><div class="cal-head">Tue</div><div class="cal-head">Wed</div>
+              <div class="cal-head">Thu</div><div class="cal-head">Fri</div><div class="cal-head">Sat</div><div class="cal-head">Sun</div>
+            </div>
+            <div class="cal-grid" id="cal"></div>
+            <div style="display:flex;gap:18px;margin-top:14px;font-size:11px;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:5px"><div style="width:9px;height:9px;border-radius:50%;background:#27AE60"></div>Present</div>
+              <div style="display:flex;align-items:center;gap:5px"><div style="width:9px;height:9px;border-radius:50%;background:var(--sw-red)"></div>Absent</div>
+              <div style="display:flex;align-items:center;gap:5px"><div style="width:9px;height:9px;border-radius:50%;background:var(--sw-gold)"></div>Leave / Today</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ TARGETS ══ -->
+      <div class="panel" id="panel-targets">
+        <div style="margin-bottom:20px">
+          <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--sw-green-dark)">My Targets · June 2025</div>
+          <div style="font-size:11.5px;color:var(--sw-text-muted);margin-top:3px">Arjun Kumar · Sales Executive · Bangalore North · South India Territory</div>
+        </div>
+        <div class="stats-row" style="margin-bottom:20px">
+          <div class="stat"><div class="stat-icon">💰</div><div class="stat-lbl">Sales Target</div><div class="stat-val">72%</div><div class="stat-delta up">₹2.88L / ₹4L</div></div>
+          <div class="stat"><div class="stat-icon">🗺️</div><div class="stat-lbl">Visit Target</div><div class="stat-val">84%</div><div class="stat-delta up">42 / 50 visits</div></div>
+          <div class="stat"><div class="stat-icon">🤝</div><div class="stat-lbl">New Dealers</div><div class="stat-val">1/3</div><div class="stat-delta neutral">2 more needed</div></div>
+          <div class="stat"><div class="stat-icon">👨‍🌾</div><div class="stat-lbl">Farmer Demos</div><div class="stat-val">8/12</div><div class="stat-delta neutral">4 more needed</div></div>
+        </div>
+        <div class="tgt-card">
+          <div class="tgt-hd"><div class="tgt-lbl">💰 Monthly Sales Target</div><div class="tgt-period">₹2,88,000 / ₹4,00,000</div></div>
+          <div class="tgt-bg"><div class="tgt-fill" style="width:72%"></div></div>
+          <div class="tgt-labels"><div class="tgt-done">72% complete</div><div class="tgt-goal">₹1.12L remaining · 24 days left</div></div>
+        </div>
+        <div class="tgt-card">
+          <div class="tgt-hd"><div class="tgt-lbl">🗺️ Field Visits</div><div class="tgt-period">42 / 50 visits</div></div>
+          <div class="tgt-bg"><div class="tgt-fill" style="width:84%"></div></div>
+          <div class="tgt-labels"><div class="tgt-done">84% complete</div><div class="tgt-goal">8 more visits needed</div></div>
+        </div>
+        <div class="tgt-card">
+          <div class="tgt-hd"><div class="tgt-lbl">👨‍🌾 Farmer Demo Meets</div><div class="tgt-period">8 / 12 demos</div></div>
+          <div class="tgt-bg"><div class="tgt-fill" style="width:67%;background:linear-gradient(90deg,var(--sw-gold),var(--sw-gold-light))"></div></div>
+          <div class="tgt-labels"><div style="color:var(--sw-gold);font-weight:700">67% complete</div><div class="tgt-goal">4 demos remaining</div></div>
+        </div>
+        <div class="tgt-card">
+          <div class="tgt-hd"><div class="tgt-lbl">🤝 New Dealer Onboarding</div><div class="tgt-period">1 / 3 dealers</div></div>
+          <div class="tgt-bg"><div class="tgt-fill" style="width:33%;background:linear-gradient(90deg,var(--sw-orange),#F39C12)"></div></div>
+          <div class="tgt-labels"><div style="color:var(--sw-orange);font-weight:700">33% — needs attention</div><div class="tgt-goal">2 more dealers this month</div></div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<div class="wm">Demo · AITOmate</div>
+
+<script>
+const topbarMap = {
+  dashboard:  ["Good Morning, Arjun 👋",           "Friday, 6 Jun 2025 · Bangalore North Zone · Karnataka"],
+  visits:     ["Field Visits",                      "Today · 5 planned · 2 completed · Karnataka Zone"],
+  pipeline:   ["Sales Pipeline",                    "24 active leads · ₹5.5L pipeline · South India"],
+  catalogue:  ["F1 Hybrid Seed Catalogue",          "67+ varieties · ISO 9001:2015 · 98% genetic purity"],
+  orders:     ["Orders",                            "6 pending · ₹1.4L value · South India"],
+  dealers:    ["Authorized Dealers",                "14 active · Dynamic margin system · 6 states"],
+  events:     ["Events & Outreach Meets",           "2 upcoming · Farmer seminars · Field demos"],
+  attendance: ["Attendance · June 2025",            "Arjun Kumar · Sales Executive · Bangalore North"],
+  targets:    ["My Targets · June 2025",            "Sales Executive · Bangalore North · South India"],
+};
+
+function go(el, panel) {
+  document.querySelectorAll('.sb-nav').forEach(n => n.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  const t = document.getElementById('panel-' + panel);
+  if (t) t.classList.add('active');
+  if (topbarMap[panel]) {
+    document.getElementById('tb-title').textContent = topbarMap[panel][0];
+    document.getElementById('tb-sub').textContent   = topbarMap[panel][1];
+  }
+}
+
+function swTab(el) {
+  const row = el.closest('.tab-row');
+  row.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// Build attendance calendar for June 2025
+// June 1 2025 = Sunday → Mon-start offset = 6
+(function buildCal() {
+  const cal = document.getElementById('cal');
+  if (!cal) return;
+  const today = 6;
+  const present = new Set([2,3,4,5,9,10,11,12,16,17,18,19,23,24,25,26]);
+  const absent  = new Set([13]);
+  const leave   = new Set([20]);
+  const days    = ['M','T','W','T','F','S','S'];
+  for (let b = 0; b < 6; b++) {
+    const d = document.createElement('div');
+    d.style.cssText = 'background:transparent;border:none';
+    cal.appendChild(d);
+  }
+  for (let day = 1; day <= 30; day++) {
+    const d = document.createElement('div');
+    d.className = 'cal-day';
+    const dow = days[(day + 5) % 7];
+    let cls = '', pip = '', lbl = '';
+    if (day === today)        { cls='today';   pip='pip-today';   lbl='Now'; }
+    else if (day > today)     {                                    lbl='—'; }
+    else if (present.has(day)){ cls='present'; pip='pip-present'; lbl='✓'; }
+    else if (absent.has(day)) { cls='absent';  pip='pip-absent';  lbl='✗'; }
+    else if (leave.has(day))  { cls='leave';   pip='pip-leave';   lbl='L'; }
+    if (cls) d.classList.add(cls);
+    d.innerHTML = `<div class="d-name">${dow}</div><div class="d-num">${day}</div>${pip ? `<div class="d-pip ${pip}"></div>` : `<div style="height:7px;font-size:9px;color:var(--sw-text-muted)">${lbl}</div>`}`;
+    cal.appendChild(d);
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SeedWise Technologies — Executive Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&family=Lora:ital,wght@0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #0C1410;
+  --bg2:       #111B16;
+  --bg3:       #172018;
+  --bg4:       #1E2B20;
+  --border:    rgba(255,255,255,0.07);
+  --border2:   rgba(255,255,255,0.12);
+  --green:     #4ADE80;
+  --green-d:   #22C55E;
+  --green-dim: rgba(74,222,128,0.12);
+  --gold:      #FBBF24;
+  --gold-dim:  rgba(251,191,36,0.12);
+  --red:       #F87171;
+  --red-dim:   rgba(248,113,113,0.1);
+  --blue:      #60A5FA;
+  --blue-dim:  rgba(96,165,250,0.1);
+  --orange:    #FB923C;
+  --purple:    #C084FC;
+  --text:      #E8F0EB;
+  --text-mid:  #8BA898;
+  --text-dim:  #4A6355;
+  --accent:    #4ADE80;
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; overflow:hidden; }
+body {
+  font-family: 'Syne', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ── LAYOUT ── */
+.shell { display:flex; height:100vh; max-width:1600px; margin:0 auto; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 220px; min-width:220px;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction:column;
+  overflow:hidden;
+}
+.sb-top {
+  padding: 22px 18px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.sb-logo-row { display:flex; align-items:center; gap:9px; margin-bottom:14px; }
+.sb-logo-icon {
+  width:36px; height:36px; border-radius:9px;
+  background: linear-gradient(135deg, #22C55E, #4ADE80);
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px;
+}
+.sb-logo-name { font-size:16px; font-weight:800; color:#fff; letter-spacing:-.3px; }
+.sb-logo-sub  { font-size:9px; color:var(--green); text-transform:uppercase; letter-spacing:2px; }
+
+.sb-user {
+  background: var(--bg3); border-radius:10px; padding:12px;
+  border:1px solid var(--border);
+}
+.sb-u-name { font-size:12.5px; font-weight:700; color:#fff; }
+.sb-u-role { font-size:10px; color:var(--text-mid); margin-top:2px; }
+.sb-u-chip {
+  display:inline-flex; align-items:center; gap:4px;
+  background: rgba(74,222,128,.15); color:var(--green);
+  font-size:9.5px; font-weight:700; padding:2px 8px; border-radius:20px; margin-top:7px;
+  text-transform:uppercase; letter-spacing:.5px;
+}
+
+.sb-nav-label {
+  padding: 14px 18px 5px;
+  font-size:8.5px; font-weight:700; text-transform:uppercase;
+  letter-spacing:2px; color:var(--text-dim);
+}
+.sb-nav {
+  display:flex; align-items:center; gap:10px;
+  padding: 10px 16px; margin:1px 8px;
+  border-radius:9px; cursor:pointer;
+  color: var(--text-mid); font-size:12.5px; font-weight:600;
+  transition: all .15s; position:relative;
+}
+.sb-nav:hover { background:var(--bg3); color:var(--text); }
+.sb-nav.active { background:var(--green-dim); color:var(--green); }
+.sb-nav.active::before {
+  content:''; position:absolute; left:0; top:50%; transform:translateY(-50%);
+  width:2.5px; height:55%; background:var(--green); border-radius:0 3px 3px 0;
+}
+.sb-nav-ico { font-size:15px; width:18px; text-align:center; }
+.sb-badge {
+  margin-left:auto; background:var(--gold); color:#000;
+  font-size:9px; font-weight:800; padding:1px 6px; border-radius:10px;
+}
+
+.sb-foot {
+  margin-top:auto; padding:14px 16px;
+  border-top:1px solid var(--border);
+}
+.sb-live { display:flex; align-items:center; gap:6px; font-size:10.5px; color:var(--text-mid); }
+.sb-live-dot { width:6px; height:6px; border-radius:50%; background:var(--green); animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+/* ── MAIN ── */
+.main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+
+/* ── TOPBAR ── */
+.topbar {
+  background:var(--bg2); border-bottom:1px solid var(--border);
+  padding:0 26px; height:58px;
+  display:flex; align-items:center; gap:14px; flex-shrink:0;
+}
+.tb-title { font-size:17px; font-weight:800; color:#fff; letter-spacing:-.3px; }
+.tb-sub   { font-size:10.5px; color:var(--text-mid); margin-top:1px; }
+.tb-right { margin-left:auto; display:flex; align-items:center; gap:10px; }
+.tb-pill {
+  display:flex; align-items:center; gap:6px;
+  background:var(--bg3); border:1px solid var(--border2);
+  border-radius:8px; padding:5px 12px;
+  font-size:11px; font-weight:600; color:var(--text-mid);
+  font-family:'DM Mono',monospace;
+}
+.tb-pill .dot { width:6px; height:6px; border-radius:50%; }
+.dot-green { background:var(--green); }
+.dot-gold  { background:var(--gold); }
+.dot-red   { background:var(--red); }
+
+.btn {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:7px 15px; border-radius:8px;
+  font-family:'Syne',sans-serif;
+  font-size:12px; font-weight:700; cursor:pointer; border:none; transition:all .15s;
+}
+.btn-green { background:var(--green-d); color:#000; }
+.btn-green:hover { background:var(--green); }
+.btn-ghost { background:var(--bg3); border:1px solid var(--border2); color:var(--text-mid); }
+.btn-ghost:hover { color:var(--text); border-color:var(--border2); }
+
+/* ── CONTENT ── */
+.content { flex:1; overflow-y:auto; padding:20px 24px; }
+.content::-webkit-scrollbar { width:3px; }
+.content::-webkit-scrollbar-thumb { background:var(--border2); border-radius:10px; }
+
+/* ── PANELS ── */
+.panel { display:none; animation:fadeUp .2s ease; }
+.panel.active { display:block; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+
+/* ── KPI ROW ── */
+.kpi-row { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:18px; }
+.kpi {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:12px; padding:16px 18px; position:relative; overflow:hidden;
+  transition:border-color .2s;
+}
+.kpi:hover { border-color:var(--border2); }
+.kpi::after {
+  content:''; position:absolute; top:0; right:0;
+  width:70px; height:70px; border-radius:50%;
+  transform:translate(25px,-25px); opacity:.06;
+}
+.kpi.g::after { background:var(--green); }
+.kpi.go::after { background:var(--gold); }
+.kpi.b::after { background:var(--blue); }
+.kpi.r::after { background:var(--red); }
+.kpi.p::after { background:var(--purple); }
+.kpi-ico { font-size:18px; margin-bottom:10px; opacity:.8; }
+.kpi-lbl { font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text-dim); margin-bottom:7px; }
+.kpi-val { font-family:'Lora',serif; font-size:28px; font-weight:600; color:#fff; line-height:1; margin-bottom:5px; }
+.kpi-delta { font-size:11px; font-weight:600; display:flex; align-items:center; gap:3px; font-family:'DM Mono',monospace; }
+.up    { color:var(--green); }
+.down  { color:var(--red); }
+.flat  { color:var(--text-mid); }
+
+/* ── SECTION TITLE ── */
+.sec-title {
+  font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px;
+  color:var(--text-dim); margin-bottom:12px; display:flex; align-items:center; gap:8px;
+}
+.sec-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* ── GRID LAYOUTS ── */
+.g2  { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px; }
+.g3  { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:16px; }
+.g13 { display:grid; grid-template-columns:1.6fr 1fr; gap:14px; margin-bottom:16px; }
+.g31 { display:grid; grid-template-columns:1fr 1.6fr; gap:14px; margin-bottom:16px; }
+
+/* ── CARD ── */
+.card {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:12px; overflow:hidden;
+}
+.card-hd {
+  padding:13px 18px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.card-title { font-size:12.5px; font-weight:700; color:#fff; display:flex; align-items:center; gap:7px; }
+.card-sub   { font-size:10px; color:var(--text-mid); margin-left:auto; font-family:'DM Mono',monospace; }
+
+/* ── REP TABLE ── */
+.rep-table { width:100%; border-collapse:collapse; }
+.rep-table thead th {
+  padding:9px 14px; font-size:9px; font-weight:700; text-transform:uppercase;
+  letter-spacing:1.2px; color:var(--text-dim); text-align:left;
+  border-bottom:1px solid var(--border); background:var(--bg3);
+}
+.rep-table thead th:not(:first-child) { text-align:right; }
+.rep-table tbody tr {
+  border-bottom:1px solid var(--border);
+  transition:background .15s; cursor:pointer;
+}
+.rep-table tbody tr:last-child { border-bottom:none; }
+.rep-table tbody tr:hover { background:var(--bg3); }
+.rep-table td { padding:11px 14px; font-size:12px; }
+.rep-table td:not(:first-child) { text-align:right; font-family:'DM Mono',monospace; }
+
+.rep-av {
+  width:32px; height:32px; border-radius:8px;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:11px;
+}
+.rep-name  { font-weight:700; color:#fff; font-size:12.5px; }
+.rep-role  { font-size:10px; color:var(--text-mid); margin-top:1px; }
+.rep-zone  {
+  font-size:9.5px; font-weight:700; padding:2px 7px; border-radius:6px;
+  background:var(--bg4); color:var(--text-mid); font-family:'DM Mono',monospace;
+}
+
+/* progress bar inline */
+.pbar { display:flex; align-items:center; gap:8px; justify-content:flex-end; }
+.pbar-track { width:70px; height:5px; background:var(--bg4); border-radius:10px; overflow:hidden; }
+.pbar-fill  { height:100%; border-radius:10px; }
+.pbar-pct   { font-size:11px; font-family:'DM Mono',monospace; font-weight:600; width:32px; text-align:right; }
+
+/* status chip */
+.chip {
+  display:inline-flex; align-items:center; gap:4px;
+  padding:2px 8px; border-radius:6px;
+  font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.4px;
+}
+.chip-g  { background:var(--green-dim);  color:var(--green); }
+.chip-go { background:var(--gold-dim);   color:var(--gold); }
+.chip-r  { background:var(--red-dim);    color:var(--red); }
+.chip-b  { background:var(--blue-dim);   color:var(--blue); }
+
+/* ── MINI BAR CHART ── */
+.bar-chart { padding:14px 18px; }
+.bar-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.bar-lbl { width:80px; font-size:11px; color:var(--text-mid); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.bar-bg  { flex:1; height:8px; background:var(--bg4); border-radius:10px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:10px; transition:width .6s ease; }
+.bar-val { width:44px; font-size:11px; font-family:'DM Mono',monospace; color:var(--text-mid); text-align:right; }
+
+/* ── DONUT CHART MOCK ── */
+.donut-wrap {
+  display:flex; align-items:center; justify-content:center;
+  padding:16px; gap:20px;
+}
+.donut-svg { flex-shrink:0; }
+.donut-legend { display:flex; flex-direction:column; gap:8px; }
+.dl-item { display:flex; align-items:center; gap:8px; font-size:11px; }
+.dl-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.dl-name { color:var(--text-mid); font-weight:600; }
+.dl-val  { margin-left:auto; font-family:'DM Mono',monospace; font-weight:700; color:#fff; }
+
+/* ── ACTIVITY FEED ── */
+.feed { padding:8px 0; }
+.feed-item {
+  display:flex; align-items:flex-start; gap:11px;
+  padding:10px 18px; border-bottom:1px solid var(--border);
+  transition:background .15s;
+}
+.feed-item:last-child { border-bottom:none; }
+.feed-item:hover { background:var(--bg3); }
+.feed-dot { width:8px; height:8px; border-radius:50%; margin-top:4px; flex-shrink:0; }
+.feed-txt { flex:1; font-size:11.5px; color:var(--text-mid); line-height:1.5; }
+.feed-txt strong { color:var(--text); font-weight:700; }
+.feed-time { font-size:10px; color:var(--text-dim); font-family:'DM Mono',monospace; white-space:nowrap; }
+
+/* ── ALERT CARD ── */
+.alert-item {
+  display:flex; align-items:center; gap:12px;
+  padding:11px 18px; border-bottom:1px solid var(--border); cursor:pointer;
+  transition:background .15s;
+}
+.alert-item:last-child { border-bottom:none; }
+.alert-item:hover { background:var(--bg3); }
+.alert-icon { font-size:18px; }
+.alert-info { flex:1; }
+.alert-title { font-size:12px; font-weight:700; color:#fff; }
+.alert-sub   { font-size:10.5px; color:var(--text-mid); margin-top:2px; }
+.alert-amt   { font-family:'DM Mono',monospace; font-size:13px; font-weight:700; }
+
+/* ── REGION MAP ── */
+.region-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:14px; }
+.region-card {
+  background:var(--bg3); border:1px solid var(--border);
+  border-radius:9px; padding:13px;
+}
+.region-name { font-size:11.5px; font-weight:700; color:#fff; margin-bottom:4px; }
+.region-val  { font-family:'Lora',serif; font-size:22px; font-weight:600; color:var(--green); margin-bottom:2px; }
+.region-sub  { font-size:10px; color:var(--text-mid); margin-bottom:9px; }
+.region-bar  { height:4px; background:var(--bg4); border-radius:10px; overflow:hidden; }
+.region-fill { height:100%; border-radius:10px; background:linear-gradient(90deg,var(--green),#a3f0b5); }
+
+/* ── TABS ── */
+.tab-row {
+  display:flex; gap:3px;
+  background:var(--bg3); border:1px solid var(--border);
+  border-radius:9px; padding:3px; width:fit-content; margin-bottom:18px;
+}
+.tab {
+  padding:6px 16px; border-radius:7px;
+  font-size:11.5px; font-weight:700; cursor:pointer;
+  color:var(--text-mid); transition:all .15s;
+  border:none; background:none; font-family:'Syne',sans-serif;
+}
+.tab.active { background:var(--green-d); color:#000; }
+.tab:hover:not(.active) { color:var(--text); }
+
+/* ── SPARKLINE MOCK ── */
+.sparkline { display:inline-flex; align-items:flex-end; gap:2px; height:28px; }
+.spark-bar { width:5px; background:var(--green-dim); border-radius:2px 2px 0 0; transition:background .2s; }
+.spark-bar:hover { background:var(--green); }
+.spark-bar.hi { background:rgba(74,222,128,.5); }
+
+/* ── PRODUCT RANK ── */
+.prod-rank { padding:8px 0; }
+.pr-item {
+  display:flex; align-items:center; gap:12px;
+  padding:10px 18px; border-bottom:1px solid var(--border);
+}
+.pr-item:last-child { border-bottom:none; }
+.pr-num { font-size:11px; font-weight:800; color:var(--text-dim); width:16px; }
+.pr-icon { font-size:20px; }
+.pr-info { flex:1; }
+.pr-name { font-size:12px; font-weight:700; color:#fff; }
+.pr-sku  { font-size:10px; color:var(--text-mid); font-family:'DM Mono',monospace; }
+.pr-bar-wrap { width:90px; }
+.pr-bar-bg   { height:5px; background:var(--bg4); border-radius:10px; overflow:hidden; margin-bottom:3px; }
+.pr-bar-fill { height:100%; border-radius:10px; }
+.pr-orders   { font-size:10.5px; color:var(--text-mid); font-family:'DM Mono',monospace; text-align:right; }
+.pr-revenue  { font-size:12px; font-weight:700; font-family:'DM Mono',monospace; color:#fff; width:54px; text-align:right; }
+
+/* ── WATERMARK ── */
+.wm {
+  position:fixed; bottom:12px; right:12px;
+  background:var(--bg3); border:1px solid var(--border2);
+  color:var(--green); font-size:9px; font-weight:700;
+  text-transform:uppercase; letter-spacing:2px;
+  padding:5px 12px; border-radius:20px; z-index:9999;
+  font-family:'DM Mono',monospace;
+}
+
+/* ── TOOLTIP CHIP ── */
+.rank-1 { color:var(--gold); }
+.rank-2 { color:var(--text-mid); }
+.rank-3 { color:var(--orange); }
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <div class="sb-top">
+    <div class="sb-logo-row">
+      <div class="sb-logo-icon">🌱</div>
+      <div>
+        <div class="sb-logo-name">SeedWise</div>
+        <div class="sb-logo-sub">Technologies</div>
+      </div>
+    </div>
+    <div class="sb-user">
+      <div class="sb-u-name">Vikram Nair</div>
+      <div class="sb-u-role">Chief Executive Officer</div>
+      <div class="sb-u-chip">🔐 CEO Access</div>
+    </div>
+  </div>
+
+  <div class="sb-nav-label">Overview</div>
+  <div class="sb-nav active" onclick="go(this,'overview')">
+    <span class="sb-nav-ico">📊</span> Executive Overview
+  </div>
+  <div class="sb-nav" onclick="go(this,'team')">
+    <span class="sb-nav-ico">👥</span> Sales Team
+  </div>
+  <div class="sb-nav" onclick="go(this,'pipeline')">
+    <span class="sb-nav-ico">📈</span> Pipeline & Revenue
+  </div>
+
+  <div class="sb-nav-label">Operations</div>
+  <div class="sb-nav" onclick="go(this,'territory')">
+    <span class="sb-nav-ico">🗺️</span> Territory Map
+  </div>
+  <div class="sb-nav" onclick="go(this,'products')">
+    <span class="sb-nav-ico">🌾</span> Product Performance
+  </div>
+  <div class="sb-nav" onclick="go(this,'dealers')">
+    <span class="sb-nav-ico">🤝</span> Dealer Network
+    <span class="sb-badge">3</span>
+  </div>
+
+  <div class="sb-nav-label">People</div>
+  <div class="sb-nav" onclick="go(this,'attendance')">
+    <span class="sb-nav-ico">🗓️</span> Attendance & HR
+  </div>
+  <div class="sb-nav" onclick="go(this,'alerts')">
+    <span class="sb-nav-ico">🔔</span> Alerts & Actions
+    <span class="sb-badge">5</span>
+  </div>
+
+  <div class="sb-foot">
+    <div class="sb-live"><div class="sb-live-dot"></div> Live · Jun 6, 2025 · 9:42 AM</div>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="tb-title" id="tb-title">Executive Overview</div>
+      <div class="tb-sub"   id="tb-sub">SeedWise Technologies Pvt. Ltd. · June 2025 · 8 States · 12 Reps</div>
+    </div>
+    <div class="tb-right">
+      <div class="tb-pill"><div class="dot dot-green"></div> 8 On Field</div>
+      <div class="tb-pill"><div class="dot dot-gold"></div> 5 Alerts</div>
+      <div class="tb-pill"><div class="dot dot-red"></div> 2 Escalations</div>
+      <button class="btn btn-ghost">↓ Export Report</button>
+      <button class="btn btn-green">+ Add Member</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ════ EXECUTIVE OVERVIEW ════ -->
+    <div class="panel active" id="panel-overview">
+
+      <!-- KPI Row -->
+      <div class="kpi-row">
+        <div class="kpi g">
+          <div class="kpi-ico">💰</div>
+          <div class="kpi-lbl">Revenue · Jun</div>
+          <div class="kpi-val">₹46.8L</div>
+          <div class="kpi-delta up">↑ 22% vs May</div>
+        </div>
+        <div class="kpi go">
+          <div class="kpi-ico">🎯</div>
+          <div class="kpi-lbl">Target Achievement</div>
+          <div class="kpi-val">74%</div>
+          <div class="kpi-delta up">↑ On Track</div>
+        </div>
+        <div class="kpi b">
+          <div class="kpi-ico">🗺️</div>
+          <div class="kpi-lbl">Field Visits · Jun</div>
+          <div class="kpi-val">384</div>
+          <div class="kpi-delta up">↑ 18% vs May</div>
+        </div>
+        <div class="kpi r">
+          <div class="kpi-ico">📦</div>
+          <div class="kpi-lbl">Pending Orders</div>
+          <div class="kpi-val">28</div>
+          <div class="kpi-delta down">↑ 5 overdue</div>
+        </div>
+        <div class="kpi p">
+          <div class="kpi-ico">🤝</div>
+          <div class="kpi-lbl">Active Pipeline</div>
+          <div class="kpi-val">₹52L</div>
+          <div class="kpi-delta up">↑ 240 leads</div>
+        </div>
+      </div>
+
+      <!-- Team Performance + Activity -->
+      <div class="g13">
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-title">👥 Sales Team Performance — All 10 Reps</div>
+            <div class="card-sub">Jun 2025 · Target: ₹4L/rep</div>
+          </div>
+          <table class="rep-table">
+            <thead>
+              <tr>
+                <th>Rep</th>
+                <th>Zone</th>
+                <th>Visits</th>
+                <th>Revenue</th>
+                <th>vs Target</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="rep-table-body"></tbody>
+          </table>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <!-- Region Revenue -->
+          <div class="card">
+            <div class="card-hd"><div class="card-title">📍 Revenue by Region</div></div>
+            <div class="region-grid">
+              <div class="region-card">
+                <div class="region-name">Karnataka</div>
+                <div class="region-val">₹16.2L</div>
+                <div class="region-sub">5 reps · Bangalore + districts</div>
+                <div class="region-bar"><div class="region-fill" style="width:82%"></div></div>
+              </div>
+              <div class="region-card">
+                <div class="region-name">Tamil Nadu</div>
+                <div class="region-val">₹8.4L</div>
+                <div class="region-sub">2 reps · Chennai, Coimbatore</div>
+                <div class="region-bar"><div class="region-fill" style="width:55%;background:linear-gradient(90deg,var(--gold),#fde68a)"></div></div>
+              </div>
+              <div class="region-card">
+                <div class="region-name">Telangana</div>
+                <div class="region-val">₹6.8L</div>
+                <div class="region-sub">2 reps · Hyderabad + rural</div>
+                <div class="region-bar"><div class="region-fill" style="width:42%;background:linear-gradient(90deg,var(--blue),#93c5fd)"></div></div>
+              </div>
+              <div class="region-card">
+                <div class="region-name">Maharashtra</div>
+                <div class="region-val">₹4.2L</div>
+                <div class="region-sub">1 rep · North India expansion</div>
+                <div class="region-bar"><div class="region-fill" style="width:28%;background:linear-gradient(90deg,var(--purple),#e9d5ff)"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Activity -->
+          <div class="card">
+            <div class="card-hd"><div class="card-title">⚡ Live Activity</div><div class="card-sub">Today · Real-time</div></div>
+            <div class="feed">
+              <div class="feed-item"><div class="feed-dot" style="background:var(--green)"></div><div class="feed-txt"><strong>Arjun Kumar</strong> closed ₹38,200 order — Krishnappa Seeds, Doddaballapur</div><div class="feed-time">9:38 AM</div></div>
+              <div class="feed-item"><div class="feed-dot" style="background:var(--gold)"></div><div class="feed-txt"><strong>Deepa Reddy</strong> logged demo visit — F1 SATHVIK at Tumkur farmer field</div><div class="feed-time">9:21 AM</div></div>
+              <div class="feed-item"><div class="feed-dot" style="background:var(--green)"></div><div class="feed-txt"><strong>Suresh Patil</strong> onboarded new dealer — Patil Seeds, Pune (Maharashtra)</div><div class="feed-time">8:55 AM</div></div>
+              <div class="feed-item"><div class="feed-dot" style="background:#38BDF8"></div><div class="feed-txt"><strong>Rahul Verma</strong> logged new lead — Sharma Agri, Lucknow, UP 🆕</div><div class="feed-time">8:40 AM</div></div>
+              <div class="feed-item"><div class="feed-dot" style="background:#F97316"></div><div class="feed-txt"><strong>Sanjay Rao</strong> onboarded dealer — AP Agro Hub, Vijayawada, AP 🆕</div><div class="feed-time">8:28 AM</div></div>
+              <div class="feed-item"><div class="feed-dot" style="background:var(--red)"></div><div class="feed-txt"><strong>Kiran Naidu</strong> flagged overdue collection — ₹62K pending at Hyderabad dealer</div><div class="feed-time">8:44 AM</div></div>
+              <div class="feed-item"><div class="feed-dot" style="background:var(--blue)"></div><div class="feed-txt"><strong>Pooja Menon</strong> scheduled farmer seminar — Ridge Gourd demo, Chennai June 14</div><div class="feed-time">8:30 AM</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Target Progress bars + Product Revenue -->
+      <div class="g2">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">🎯 Individual Target Progress</div><div class="card-sub">Monthly Sales Target ₹4L/rep</div></div>
+          <div class="bar-chart" id="target-bars"></div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">🌾 Top Products by Revenue</div><div class="card-sub">Jun 2025</div></div>
+          <div class="prod-rank" id="prod-rank"></div>
+        </div>
+      </div>
+
+    </div><!-- /overview -->
+
+    <!-- ════ SALES TEAM ════ -->
+    <div class="panel" id="panel-team">
+      <div class="tab-row">
+        <button class="tab active" onclick="swTab(this)">All Reps</button>
+        <button class="tab" onclick="swTab(this)">On Target</button>
+        <button class="tab" onclick="swTab(this)">Needs Attention</button>
+      </div>
+      <div class="kpi-row">
+        <div class="kpi g"><div class="kpi-ico">👥</div><div class="kpi-lbl">Total Reps</div><div class="kpi-val">10</div><div class="kpi-delta up">All Active</div></div>
+        <div class="kpi go"><div class="kpi-ico">✅</div><div class="kpi-lbl">On Target (≥70%)</div><div class="kpi-val">7</div><div class="kpi-delta up">70% of team</div></div>
+        <div class="kpi r"><div class="kpi-ico">⚠️</div><div class="kpi-lbl">Below Target</div><div class="kpi-val">3</div><div class="kpi-delta down">Needs review</div></div>
+        <div class="kpi b"><div class="kpi-ico">🗺️</div><div class="kpi-lbl">Total Visits</div><div class="kpi-val">384</div><div class="kpi-delta up">Jun 2025</div></div>
+        <div class="kpi p"><div class="kpi-ico">📍</div><div class="kpi-lbl">Avg Km/Rep</div><div class="kpi-val">334</div><div class="kpi-delta up">↑ 8% vs May</div></div>
+      </div>
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title">👥 Full Sales Team — June 2025 Performance</div>
+          <div class="card-sub">12 reps · South, North & East India</div>
+        </div>
+        <table class="rep-table">
+          <thead>
+            <tr>
+              <th>Sales Rep</th>
+              <th>Zone / State</th>
+              <th>Visits</th>
+              <th>Leads</th>
+              <th>Orders</th>
+              <th>Revenue</th>
+              <th>Collection</th>
+              <th>Dealers Added</th>
+              <th>Target %</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="full-team-body"></tbody>
+        </table>
+      </div>
+    </div><!-- /team -->
+
+    <!-- ════ PIPELINE ════ -->
+    <div class="panel" id="panel-pipeline">
+      <div class="kpi-row">
+        <div class="kpi g"><div class="kpi-ico">🎯</div><div class="kpi-lbl">Total Prospects</div><div class="kpi-val">84</div><div class="kpi-delta up">+12 this week</div></div>
+        <div class="kpi go"><div class="kpi-ico">🌱</div><div class="kpi-lbl">Demo Done</div><div class="kpi-val">56</div><div class="kpi-delta up">₹18.4L value</div></div>
+        <div class="kpi b"><div class="kpi-ico">💬</div><div class="kpi-lbl">Negotiation</div><div class="kpi-val">38</div><div class="kpi-delta flat">₹12.2L value</div></div>
+        <div class="kpi r"><div class="kpi-ico">✅</div><div class="kpi-lbl">Won · Jun</div><div class="kpi-val">20</div><div class="kpi-delta up">₹38.4L closed</div></div>
+        <div class="kpi p"><div class="kpi-ico">❌</div><div class="kpi-lbl">Lost · Jun</div><div class="kpi-val">4</div><div class="kpi-delta down">₹2.8L lost</div></div>
+      </div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">📈 Pipeline Funnel by Rep</div><div class="card-sub">Total ₹52L</div></div>
+          <div class="bar-chart" id="pipeline-bars"></div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">📅 Monthly Revenue Trend</div><div class="card-sub">Jan–Jun 2025</div></div>
+          <div style="padding:16px 18px">
+            <div style="display:flex;align-items:flex-end;gap:10px;height:120px;margin-bottom:10px">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px">
+                <div style="flex:1;width:100%;background:var(--green-dim);border-radius:4px 4px 0 0;position:relative" id="rev-bars-wrap"></div>
+              </div>
+            </div>
+            <div id="rev-trend-chart" style="padding-top:4px"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><div class="card-title">🏆 Top 10 Opportunities</div><div class="card-sub">By deal value</div></div>
+        <table class="rep-table">
+          <thead><tr><th>Prospect / Dealer</th><th>Rep Owner</th><th>Crop Interest</th><th>Stage</th><th>Value</th><th>Close Prob.</th></tr></thead>
+          <tbody id="opp-table"></tbody>
+        </table>
+      </div>
+    </div><!-- /pipeline -->
+
+    <!-- ════ TERRITORY ════ -->
+    <div class="panel" id="panel-territory">
+      <div class="kpi-row" style="grid-template-columns:repeat(4,1fr)">
+        <div class="kpi g"><div class="kpi-ico">📍</div><div class="kpi-lbl">States Active</div><div class="kpi-val">6</div><div class="kpi-delta up">15+ sowing states target</div></div>
+        <div class="kpi go"><div class="kpi-ico">🏘️</div><div class="kpi-lbl">Districts Covered</div><div class="kpi-val">28</div><div class="kpi-delta up">+4 this quarter</div></div>
+        <div class="kpi b"><div class="kpi-ico">👨‍🌾</div><div class="kpi-lbl">Farmers Reached</div><div class="kpi-val">1.2K</div><div class="kpi-delta up">Target: 25K empowered</div></div>
+        <div class="kpi r"><div class="kpi-ico">🏪</div><div class="kpi-lbl">Dealer Points</div><div class="kpi-val">42</div><div class="kpi-delta up">+6 this month</div></div>
+      </div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">🗺️ Zone-wise Revenue Breakdown</div></div>
+          <div class="bar-chart" id="zone-bars"></div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">📊 Rep Distribution by Territory</div></div>
+          <div class="region-grid">
+            <div class="region-card">
+              <div class="region-name">Karnataka</div>
+              <div class="region-val">₹16.2L</div>
+              <div class="region-sub">Arjun, Deepa, Karthik, Priya, Raj · 5 reps</div>
+              <div class="region-bar"><div class="region-fill" style="width:82%"></div></div>
+            </div>
+            <div class="region-card">
+              <div class="region-name">Tamil Nadu</div>
+              <div class="region-val">₹8.4L</div>
+              <div class="region-sub">Pooja Menon, Sunil Kumar · 2 reps</div>
+              <div class="region-bar"><div class="region-fill" style="width:55%;background:linear-gradient(90deg,var(--gold),#fde68a)"></div></div>
+            </div>
+            <div class="region-card">
+              <div class="region-name">Telangana</div>
+              <div class="region-val">₹6.8L</div>
+              <div class="region-sub">Kiran Naidu, Deepa Reddy · 2 reps</div>
+              <div class="region-bar"><div class="region-fill" style="width:44%;background:linear-gradient(90deg,var(--blue),#93c5fd)"></div></div>
+            </div>
+            <div class="region-card">
+              <div class="region-name">Maharashtra</div>
+              <div class="region-val">₹4.2L</div>
+              <div class="region-sub">Suresh Patil · 1 rep · North expansion</div>
+              <div class="region-bar"><div class="region-fill" style="width:28%;background:linear-gradient(90deg,var(--purple),#e9d5ff)"></div></div>
+            </div>
+            <div class="region-card">
+              <div class="region-name">Andhra Pradesh</div>
+              <div class="region-val">₹2.1L</div>
+              <div class="region-sub">Expanding Q3 2025 · 1 planned rep</div>
+              <div class="region-bar"><div class="region-fill" style="width:14%;background:linear-gradient(90deg,var(--orange),#fed7aa)"></div></div>
+            </div>
+            <div class="region-card">
+              <div class="region-name">Madhya Pradesh</div>
+              <div class="region-val">₹0.8L</div>
+              <div class="region-sub">North India entry phase</div>
+              <div class="region-bar"><div class="region-fill" style="width:8%;background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /territory -->
+
+    <!-- ════ PRODUCTS ════ -->
+    <div class="panel" id="panel-products">
+      <div class="kpi-row">
+        <div class="kpi g"><div class="kpi-ico">🌱</div><div class="kpi-lbl">Total SKUs</div><div class="kpi-val">67+</div><div class="kpi-delta up">F1 & OPV range</div></div>
+        <div class="kpi go"><div class="kpi-ico">🍅</div><div class="kpi-lbl">Top Product</div><div class="kpi-val">SATHVIK</div><div class="kpi-delta up">₹9.2L revenue</div></div>
+        <div class="kpi b"><div class="kpi-ico">📦</div><div class="kpi-lbl">Units Sold</div><div class="kpi-val">4,820</div><div class="kpi-delta up">↑ 31% vs May</div></div>
+        <div class="kpi r"><div class="kpi-ico">⚠️</div><div class="kpi-lbl">Low Stock Items</div><div class="kpi-val">3</div><div class="kpi-delta down">Reorder needed</div></div>
+        <div class="kpi p"><div class="kpi-ico">🔬</div><div class="kpi-lbl">R&D Trials</div><div class="kpi-val">8</div><div class="kpi-delta flat">Hubli + Bangalore</div></div>
+      </div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">🌾 Product Revenue Ranking</div><div class="card-sub">Jun 2025</div></div>
+          <div class="prod-rank">
+            <div class="pr-item"><div class="pr-num rank-1">1</div><div class="pr-icon">🍅</div><div class="pr-info"><div class="pr-name">F1 SATHVIK Determinant Tomato</div><div class="pr-sku">SW-TOM-SATHVIK-10G</div></div><div class="pr-bar-wrap"><div class="pr-bar-bg"><div class="pr-bar-fill" style="width:100%;background:var(--green)"></div></div><div class="pr-orders">1,240 pkts</div></div><div class="pr-revenue">₹9.2L</div></div>
+            <div class="pr-item"><div class="pr-num rank-2">2</div><div class="pr-icon">🥒</div><div class="pr-info"><div class="pr-name">RG-Premier F1 Ridge Gourd</div><div class="pr-sku">SW-RG-PREM-5G</div></div><div class="pr-bar-wrap"><div class="pr-bar-bg"><div class="pr-bar-fill" style="width:72%;background:var(--gold)"></div></div><div class="pr-orders">880 pkts</div></div><div class="pr-revenue">₹6.8L</div></div>
+            <div class="pr-item"><div class="pr-num rank-3">3</div><div class="pr-icon">🥒</div><div class="pr-info"><div class="pr-name">CU-Shakthi F1 Cucumber</div><div class="pr-sku">SW-CUC-SHAK-10G</div></div><div class="pr-bar-wrap"><div class="pr-bar-bg"><div class="pr-bar-fill" style="width:58%;background:var(--blue)"></div></div><div class="pr-orders">640 pkts</div></div><div class="pr-revenue">₹5.4L</div></div>
+            <div class="pr-item"><div class="pr-num" style="color:var(--text-dim)">4</div><div class="pr-icon">🥦</div><div class="pr-info"><div class="pr-name">CF-Himgiri F1 Cauliflower</div><div class="pr-sku">SW-CAU-HIMGIRI-10G</div></div><div class="pr-bar-wrap"><div class="pr-bar-bg"><div class="pr-bar-fill" style="width:44%;background:var(--purple)"></div></div><div class="pr-orders">410 pkts</div></div><div class="pr-revenue">₹4.1L</div></div>
+            <div class="pr-item"><div class="pr-num" style="color:var(--text-dim)">5</div><div class="pr-icon">🌿</div><div class="pr-info"><div class="pr-name">SG-Surya F1 Sponge Gourd</div><div class="pr-sku">SW-SG-SURYA-5G</div></div><div class="pr-bar-wrap"><div class="pr-bar-bg"><div class="pr-bar-fill" style="width:31%;background:var(--orange)"></div></div><div class="pr-orders">290 pkts</div></div><div class="pr-revenue">₹2.8L</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">📦 Stock Alert Status</div></div>
+          <div style="padding:14px 18px;display:flex;flex-direction:column;gap:11px">
+            <div style="background:var(--bg3);border-radius:9px;padding:13px;border:1px solid var(--border)">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <div style="font-size:12.5px;font-weight:700;color:#fff">SG-Surya F1 Sponge Gourd</div>
+                <span class="chip chip-r">Low Stock</span>
+              </div>
+              <div style="font-size:11px;color:var(--text-mid);margin-bottom:8px">22 packets remaining · Reorder threshold: 50</div>
+              <div style="height:5px;background:var(--bg4);border-radius:10px;overflow:hidden"><div style="width:22%;height:100%;background:var(--red);border-radius:10px"></div></div>
+            </div>
+            <div style="background:var(--bg3);border-radius:9px;padding:13px;border:1px solid var(--border)">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <div style="font-size:12.5px;font-weight:700;color:#fff">CF-Himgiri F1 Cauliflower</div>
+                <span class="chip chip-go">Low Stock</span>
+              </div>
+              <div style="font-size:11px;color:var(--text-mid);margin-bottom:8px">35 packets remaining · Reorder threshold: 80</div>
+              <div style="height:5px;background:var(--bg4);border-radius:10px;overflow:hidden"><div style="width:35%;height:100%;background:var(--gold);border-radius:10px"></div></div>
+            </div>
+            <div style="background:var(--bg3);border-radius:9px;padding:13px;border:1px solid var(--border)">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <div style="font-size:12.5px;font-weight:700;color:#fff">F1 SATHVIK Tomato</div>
+                <span class="chip chip-g">In Stock</span>
+              </div>
+              <div style="font-size:11px;color:var(--text-mid);margin-bottom:8px">340 packets remaining · Good supply</div>
+              <div style="height:5px;background:var(--bg4);border-radius:10px;overflow:hidden"><div style="width:85%;height:100%;background:var(--green);border-radius:10px"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /products -->
+
+    <!-- ════ DEALERS ════ -->
+    <div class="panel" id="panel-dealers">
+      <div class="kpi-row">
+        <div class="kpi g"><div class="kpi-ico">🤝</div><div class="kpi-lbl">Active Dealers</div><div class="kpi-val">42</div><div class="kpi-delta up">6 states</div></div>
+        <div class="kpi go"><div class="kpi-ico">🆕</div><div class="kpi-lbl">New · Jun</div><div class="kpi-val">6</div><div class="kpi-delta up">↑ 3 Karnataka</div></div>
+        <div class="kpi r"><div class="kpi-ico">⚠️</div><div class="kpi-lbl">Outstanding Dues</div><div class="kpi-val">₹2.8L</div><div class="kpi-delta down">8 dealers</div></div>
+        <div class="kpi b"><div class="kpi-ico">💰</div><div class="kpi-lbl">Dealer Revenue</div><div class="kpi-val">₹28L</div><div class="kpi-delta up">↑ 19% vs May</div></div>
+        <div class="kpi p"><div class="kpi-ico">📋</div><div class="kpi-lbl">Pending Approval</div><div class="kpi-val">3</div><div class="kpi-delta flat">Awaiting review</div></div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><div class="card-title">🤝 Dealer Performance Overview</div><div class="card-sub">Top 10 by revenue · Jun 2025</div></div>
+        <table class="rep-table">
+          <thead><tr><th>Dealer</th><th>Location</th><th>State</th><th>Revenue · Jun</th><th>Orders</th><th>Outstanding</th><th>Status</th></tr></thead>
+          <tbody id="dealer-table"></tbody>
+        </table>
+      </div>
+    </div><!-- /dealers -->
+
+    <!-- ════ ATTENDANCE ════ -->
+    <div class="panel" id="panel-attendance">
+      <div class="kpi-row">
+        <div class="kpi g"><div class="kpi-ico">✅</div><div class="kpi-lbl">Avg Attendance</div><div class="kpi-val">88%</div><div class="kpi-delta up">Team avg Jun</div></div>
+        <div class="kpi go"><div class="kpi-ico">📍</div><div class="kpi-lbl">On Field Today</div><div class="kpi-val">8/10</div><div class="kpi-delta up">2 on leave</div></div>
+        <div class="kpi b"><div class="kpi-ico">⏱️</div><div class="kpi-lbl">Avg Field Hours</div><div class="kpi-val">7.6h</div><div class="kpi-delta up">↑ vs 7h target</div></div>
+        <div class="kpi r"><div class="kpi-ico">⚠️</div><div class="kpi-lbl">Irregular Reps</div><div class="kpi-val">2</div><div class="kpi-delta down">Below 75%</div></div>
+        <div class="kpi p"><div class="kpi-ico">🚗</div><div class="kpi-lbl">Total Km · Jun</div><div class="kpi-val">3,240</div><div class="kpi-delta up">Avg 324/rep</div></div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><div class="card-title">🗓️ Team Attendance — June 2025</div><div class="card-sub">All 12 Sales Reps</div></div>
+        <table class="rep-table">
+          <thead><tr><th>Sales Rep</th><th>Zone</th><th>Present Days</th><th>Absent</th><th>On Leave</th><th>Attendance %</th><th>Avg Field Hrs</th><th>Km Covered</th><th>Status</th></tr></thead>
+          <tbody id="attend-table"></tbody>
+        </table>
+      </div>
+    </div><!-- /attendance -->
+
+    <!-- ════ ALERTS ════ -->
+    <div class="panel" id="panel-alerts">
+      <div class="kpi-row" style="grid-template-columns:repeat(3,1fr)">
+        <div class="kpi r"><div class="kpi-ico">🚨</div><div class="kpi-lbl">Critical Alerts</div><div class="kpi-val">2</div><div class="kpi-delta down">Action required</div></div>
+        <div class="kpi go"><div class="kpi-ico">⚠️</div><div class="kpi-lbl">Warnings</div><div class="kpi-val">3</div><div class="kpi-delta flat">Monitor closely</div></div>
+        <div class="kpi g"><div class="kpi-ico">✅</div><div class="kpi-lbl">Info Alerts</div><div class="kpi-val">8</div><div class="kpi-delta up">General updates</div></div>
+      </div>
+      <div class="sec-title">🚨 Critical — Immediate Action</div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="alert-item"><div class="alert-icon">💸</div><div class="alert-info"><div class="alert-title">Overdue Collection — Gangamma & Bros.</div><div class="alert-sub">₹44,000 outstanding · 18 days overdue · Arjun Kumar · Yelahanka, Bangalore</div></div><div class="alert-amt" style="color:var(--red)">₹44K</div><span class="chip chip-r" style="margin-left:10px">Overdue</span></div>
+        <div class="alert-item"><div class="alert-icon">💸</div><div class="alert-info"><div class="alert-title">Overdue Collection — Hyderabad Agro Hub</div><div class="alert-sub">₹62,000 outstanding · 22 days overdue · Kiran Naidu · Hyderabad, Telangana</div></div><div class="alert-amt" style="color:var(--red)">₹62K</div><span class="chip chip-r" style="margin-left:10px">Escalated</span></div>
+      </div>
+      <div class="sec-title">⚠️ Warnings — Monitor</div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="alert-item"><div class="alert-icon">📦</div><div class="alert-info"><div class="alert-title">Low Stock — SG-Surya F1 Sponge Gourd</div><div class="alert-sub">22 packets remaining — reorder threshold breached. Demand high in Karnataka.</div></div><div class="alert-amt" style="color:var(--gold)">22 pkts</div><span class="chip chip-go" style="margin-left:10px">Low Stock</span></div>
+        <div class="alert-item"><div class="alert-icon">🎯</div><div class="alert-info"><div class="alert-title">3 Reps Below 50% Target — Mid-Month Check</div><div class="alert-sub">Suresh Patil (42%), Ananya Singh (38%), Vikram Rao (45%) — intervention needed</div></div><div class="alert-amt" style="color:var(--gold)">3 reps</div><span class="chip chip-go" style="margin-left:10px">At Risk</span></div>
+        <div class="alert-item"><div class="alert-icon">🤝</div><div class="alert-info"><div class="alert-title">3 Dealer Applications Pending Approval</div><div class="alert-sub">Ramu Patil (Hesaraghatta), Nair Seeds (Kochi), Sharma Agri (Nagpur) — awaiting onboarding</div></div><div class="alert-amt" style="color:var(--gold)">3 apps</div><span class="chip chip-go" style="margin-left:10px">Pending</span></div>
+      </div>
+      <div class="sec-title">✅ Info — Good News</div>
+      <div class="card">
+        <div class="alert-item"><div class="alert-icon">🏆</div><div class="alert-info"><div class="alert-title">Arjun Kumar — Top Performer June 2025</div><div class="alert-sub">94% target achieved · 42 visits · ₹3.76L revenue · Bangalore North</div></div><span class="chip chip-g" style="margin-left:auto">Top Performer</span></div>
+        <div class="alert-item"><div class="alert-icon">🌱</div><div class="alert-info"><div class="alert-title">UP &amp; AP Zones Launched — 3 New Reps Operational 🆕</div><div class="alert-sub">Rahul Verma (Lucknow), Meena Kumari (Agra/Kanpur), Sanjay Rao (Vijayawada) — expanding to 8-state coverage</div></div><span class="chip" style="background:rgba(96,165,250,.1);color:#60A5FA;margin-left:auto">Expansion</span></div>
+        <div class="alert-item"><div class="alert-icon">📅</div><div class="alert-info"><div class="alert-title">South India Distributor Meet — Jun 22</div><div class="alert-sub">Yelahanka HQ · 18 dealers confirmed · 3 agronomist presentations scheduled</div></div><span class="chip chip-b" style="margin-left:auto">Confirmed</span></div>
+        <div class="alert-item"><div class="alert-icon">🌱</div><div class="alert-info"><div class="alert-title">F1 SATHVIK Tomato — Bestseller Record</div><div class="alert-sub">1,240 packets sold in Jun — all-time monthly record for the variety</div></div><span class="chip chip-g" style="margin-left:auto">Record</span></div>
+      </div>
+    </div><!-- /alerts -->
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /shell -->
+<div class="wm">DEMO · AITOMATE</div>
+
+<script>
+// ── DATA ──
+const REPS = [
+  { id:1, initials:'AK', name:'Arjun Kumar',    role:'Sales Executive', zone:'Bangalore North', state:'Karnataka', color:'#4ADE80', visits:42, leads:24, orders:18, revenue:376000, collection:280000, dealers:1, target:94, status:'on-target' },
+  { id:2, initials:'DR', name:'Deepa Reddy',    role:'Sales Executive', zone:'Tumkur, KA',      state:'Karnataka', color:'#FBBF24', visits:38, leads:19, orders:14, revenue:312000, collection:240000, dealers:2, target:78, status:'on-target' },
+  { id:3, initials:'KP', name:'Karthik Pillai', role:'Senior SE',       zone:'Mysuru, KA',      state:'Karnataka', color:'#60A5FA', visits:35, leads:22, orders:16, revenue:344000, collection:260000, dealers:1, target:86, status:'on-target' },
+  { id:4, initials:'PM', name:'Priya M.',        role:'Sales Executive', zone:'Hassan, KA',      state:'Karnataka', color:'#C084FC', visits:30, leads:16, orders:11, revenue:288000, collection:210000, dealers:0, target:72, status:'on-target' },
+  { id:5, initials:'RB', name:'Raj Babu',        role:'Sales Executive', zone:'Bangalore South', state:'Karnataka', color:'#FB923C', visits:28, leads:14, orders:10, revenue:256000, collection:190000, dealers:1, target:64, status:'at-risk' },
+  { id:6, initials:'KN', name:'Kiran Naidu',     role:'Senior SE',       zone:'Hyderabad',       state:'Telangana', color:'#F87171', visits:32, leads:18, orders:12, revenue:296000, collection:180000, dealers:1, target:74, status:'on-target' },
+  { id:7, initials:'AM', name:'Ananya Singh',    role:'Sales Executive', zone:'Warangal',        state:'Telangana', color:'#34D399', visits:22, leads:10, orders:7,  revenue:152000, collection:120000, dealers:0, target:38, status:'below' },
+  { id:8, initials:'PN', name:'Pooja Menon',     role:'Sales Executive', zone:'Chennai',         state:'Tamil Nadu',color:'#A78BFA', visits:34, leads:20, orders:13, revenue:320000, collection:250000, dealers:2, target:80, status:'on-target' },
+  { id:9, initials:'SK', name:'Sunil Kumar',     role:'Senior SE',       zone:'Coimbatore',      state:'Tamil Nadu',color:'#FCD34D', visits:36, leads:17, orders:14, revenue:308000, collection:230000, dealers:1, target:77, status:'on-target' },
+  { id:10,initials:'SP', name:'Suresh Patil',    role:'Sales Executive', zone:'Pune/Nagpur',     state:'Maharashtra',color:'#6EE7B7',visits:26, leads:12, orders:9,  revenue:168000, collection:130000, dealers:3, target:42, status:'below' },
+];
+
+const PRODUCTS = [
+  { name:'F1 SATHVIK Tomato',   rev:'₹9.2L',  pct:100, color:'#4ADE80' },
+  { name:'RG-Premier Ridge Gourd', rev:'₹6.8L', pct:72,  color:'#FBBF24' },
+  { name:'CU-Shakthi Cucumber', rev:'₹5.4L',  pct:58,  color:'#60A5FA' },
+  { name:'CF-Himgiri Cauliflower',rev:'₹4.1L', pct:44,  color:'#C084FC' },
+  { name:'SG-Surya Sponge Gourd',rev:'₹2.8L', pct:31,  color:'#FB923C' },
+];
+
+function fmt(n) {
+  if (n >= 100000) return '₹' + (n/100000).toFixed(1) + 'L';
+  return '₹' + (n/1000).toFixed(0) + 'K';
+}
+
+function statusChip(s) {
+  if (s === 'on-target') return '<span class="chip chip-g">● On Target</span>';
+  if (s === 'at-risk')   return '<span class="chip chip-go">⚠ At Risk</span>';
+  if (s === 'below')     return '<span class="chip chip-r">↓ Below</span>';
+  return '';
+}
+
+function pctColor(p) {
+  if (p >= 80) return '#4ADE80';
+  if (p >= 60) return '#FBBF24';
+  return '#F87171';
+}
+
+// Build rep table (overview)
+function buildRepTable() {
+  const tbody = document.getElementById('rep-table-body');
+  if (!tbody) return;
+  tbody.innerHTML = REPS.map(r => `
+    <tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="rep-av" style="background:${r.color}22;color:${r.color}">${r.initials}</div>
+          <div><div class="rep-name">${r.name}</div><div class="rep-role">${r.role}</div></div>
+        </div>
+      </td>
+      <td><span class="rep-zone">${r.state}</span></td>
+      <td>${r.visits}</td>
+      <td>${fmt(r.revenue)}</td>
+      <td>
+        <div class="pbar">
+          <div class="pbar-track"><div class="pbar-fill" style="width:${r.target}%;background:${pctColor(r.target)}"></div></div>
+          <div class="pbar-pct" style="color:${pctColor(r.target)}">${r.target}%</div>
+        </div>
+      </td>
+      <td>${statusChip(r.status)}</td>
+    </tr>`).join('');
+}
+
+// Build full team table
+function buildFullTeam() {
+  const tbody = document.getElementById('full-team-body');
+  if (!tbody) return;
+  tbody.innerHTML = REPS.map(r => `
+    <tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="rep-av" style="background:${r.color}22;color:${r.color}">${r.initials}</div>
+          <div><div class="rep-name">${r.name}</div><div class="rep-role">${r.role}</div></div>
+        </div>
+      </td>
+      <td><div style="font-size:11.5px;color:var(--text-mid)">${r.zone}</div><div style="font-size:10px;color:var(--text-dim)">${r.state}</div></td>
+      <td>${r.visits}</td>
+      <td>${r.leads}</td>
+      <td>${r.orders}</td>
+      <td style="color:#fff;font-weight:700">${fmt(r.revenue)}</td>
+      <td style="color:${r.collection/r.revenue > .7 ? 'var(--green)':'var(--gold)'}">${fmt(r.collection)}</td>
+      <td>${r.dealers}</td>
+      <td>
+        <div class="pbar">
+          <div class="pbar-track"><div class="pbar-fill" style="width:${r.target}%;background:${pctColor(r.target)}"></div></div>
+          <div class="pbar-pct" style="color:${pctColor(r.target)}">${r.target}%</div>
+        </div>
+      </td>
+      <td>${statusChip(r.status)}</td>
+    </tr>`).join('');
+}
+
+// Build target bars
+function buildTargetBars() {
+  const el = document.getElementById('target-bars');
+  if (!el) return;
+  el.innerHTML = REPS.map(r => `
+    <div class="bar-row">
+      <div class="bar-lbl">${r.name.split(' ')[0]}</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:${r.target}%;background:${pctColor(r.target)}"></div></div>
+      <div class="bar-val" style="color:${pctColor(r.target)}">${r.target}%</div>
+    </div>`).join('');
+}
+
+// Build pipeline bars
+function buildPipelineBars() {
+  const el = document.getElementById('pipeline-bars');
+  if (!el) return;
+  const max = Math.max(...REPS.map(r => r.leads));
+  el.innerHTML = REPS.map(r => `
+    <div class="bar-row">
+      <div class="bar-lbl">${r.name.split(' ')[0]}</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:${Math.round(r.leads/max*100)}%;background:var(--blue)"></div></div>
+      <div class="bar-val">${r.leads}</div>
+    </div>`).join('');
+}
+
+// Build zone bars
+function buildZoneBars() {
+  const el = document.getElementById('zone-bars');
+  if (!el) return;
+  const zones = [
+    { name:'Karnataka', val:'₹16.2L', pct:82, color:'#4ADE80' },
+    { name:'Tamil Nadu', val:'₹8.4L',  pct:55, color:'#FBBF24' },
+    { name:'Telangana',  val:'₹6.8L',  pct:44, color:'#60A5FA' },
+    { name:'Maharashtra',val:'₹4.2L',  pct:28, color:'#C084FC' },
+    { name:'Andhra Pradesh',val:'₹2.1L',pct:14,color:'#FB923C' },
+    { name:'Madhya Pradesh',val:'₹0.8L',pct:8, color:'#6B7280' },
+  ];
+  el.innerHTML = zones.map(z => `
+    <div class="bar-row">
+      <div class="bar-lbl">${z.name}</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:${z.pct}%;background:${z.color}"></div></div>
+      <div class="bar-val">${z.val}</div>
+    </div>`).join('');
+}
+
+// Build product rank
+function buildProdRank() {
+  const el = document.getElementById('prod-rank');
+  if (!el) return;
+  el.innerHTML = PRODUCTS.map((p,i) => `
+    <div class="pr-item">
+      <div class="pr-num" style="color:${i===0?'var(--gold)':i===1?'var(--text-mid)':'var(--text-dim)'}">${i+1}</div>
+      <div class="pr-info"><div class="pr-name">${p.name}</div></div>
+      <div class="pr-bar-wrap"><div class="pr-bar-bg"><div class="pr-bar-fill" style="width:${p.pct}%;background:${p.color}"></div></div></div>
+      <div class="pr-revenue">${p.rev}</div>
+    </div>`).join('');
+}
+
+// Build opportunities table
+function buildOppTable() {
+  const tbody = document.getElementById('opp-table');
+  if (!tbody) return;
+  const opps = [
+    { prospect:'Krishnappa Seeds Pvt.', rep:'Arjun Kumar', crop:'Ridge Gourd + Cucumber', stage:'Demo Done', val:'₹1.2L', prob:'85%', probClass:'chip-g' },
+    { prospect:'Raju Agro Store, Shahapur', rep:'Kiran Naidu', crop:'Full F1 Range', stage:'Prospect', val:'₹2.0L', prob:'60%', probClass:'chip-go' },
+    { prospect:'Patel Agro Ventures', rep:'Deepa Reddy', crop:'F1 SATHVIK Tomato', stage:'Negotiation', val:'₹86K', prob:'75%', probClass:'chip-g' },
+    { prospect:'Nair Seeds, Kochi', rep:'Pooja Menon', crop:'Gourd Range', stage:'Demo Done', val:'₹74K', prob:'70%', probClass:'chip-g' },
+    { prospect:'Sharma Agri, Nagpur', rep:'Suresh Patil', crop:'Cauliflower F1', stage:'Prospect', val:'₹68K', prob:'40%', probClass:'chip-r' },
+    { prospect:'Ramesh Farm, Coimbatore', rep:'Sunil Kumar', crop:'Tomato SATHVIK', stage:'Negotiation', val:'₹62K', prob:'80%', probClass:'chip-g' },
+    { prospect:'GKV Agro, Warangal', rep:'Kiran Naidu', crop:'Cucumber + Gourd', stage:'Demo Done', val:'₹55K', prob:'65%', probClass:'chip-go' },
+    { prospect:'Om Agri Stores, Mysuru', rep:'Karthik Pillai', crop:'Full Range Stocking', stage:'Prospect', val:'₹1.4L', prob:'50%', probClass:'chip-go' },
+    { prospect:'Patil Seeds, Pune', rep:'Suresh Patil', crop:'Cauliflower', stage:'Prospect', val:'₹48K', prob:'35%', probClass:'chip-r' },
+    { prospect:'Agarwal Agro, Hassan', rep:'Priya M.', crop:'Ridge Gourd bulk', stage:'Negotiation', val:'₹42K', prob:'72%', probClass:'chip-g' },
+  ];
+  tbody.innerHTML = opps.map(o => `<tr>
+    <td style="color:#fff;font-weight:700">${o.prospect}</td>
+    <td style="color:var(--text-mid)">${o.rep}</td>
+    <td style="color:var(--text-mid)">${o.crop}</td>
+    <td><span class="chip chip-b">${o.stage}</span></td>
+    <td style="font-weight:700;color:#fff">${o.val}</td>
+    <td><span class="chip ${o.probClass}">${o.prob}</span></td>
+  </tr>`).join('');
+}
+
+// Build dealer table
+function buildDealerTable() {
+  const tbody = document.getElementById('dealer-table');
+  if (!tbody) return;
+  const dealers = [
+    { name:'Krishnappa Seeds Pvt.', loc:'Doddaballapur', state:'Karnataka', rev:'₹3.8L', orders:12, outstanding:'—', status:'Active' },
+    { name:'Srinivasa Reddy Agro',  loc:'Yelahanka, Bangalore', state:'Karnataka', rev:'₹2.4L', orders:8, outstanding:'—', status:'Active' },
+    { name:'Venkat Agri Solutions', loc:'Chennai', state:'Tamil Nadu', rev:'₹2.1L', orders:7, outstanding:'₹18K', status:'Active' },
+    { name:'Patel Agro Ventures',   loc:'Tumkur', state:'Karnataka', rev:'₹1.9L', orders:6, outstanding:'—', status:'Active' },
+    { name:'Ramesh Seeds Hub',      loc:'Coimbatore', state:'Tamil Nadu', rev:'₹1.6L', orders:5, outstanding:'₹12K', status:'Active' },
+    { name:'GKV Agro, Warangal',    loc:'Warangal', state:'Telangana', rev:'₹1.4L', orders:5, outstanding:'₹28K', status:'Review' },
+    { name:'Patil Seeds, Pune',     loc:'Pune', state:'Maharashtra', rev:'₹1.2L', orders:4, outstanding:'—', status:'New' },
+    { name:'Hyderabad Agro Hub',    loc:'Hyderabad', state:'Telangana', rev:'₹0.9L', orders:3, outstanding:'₹62K', status:'Overdue' },
+    { name:'Gangamma & Bros.',      loc:'Yelahanka', state:'Karnataka', rev:'₹0.6L', orders:3, outstanding:'₹44K', status:'Overdue' },
+    { name:'Ramu Patil Agri',       loc:'Hesaraghatta', state:'Karnataka', rev:'₹0.1L', orders:1, outstanding:'—', status:'New' },
+  ];
+  const sMap = { Active:'chip-g', New:'chip-go', Review:'chip-go', Overdue:'chip-r' };
+  tbody.innerHTML = dealers.map(d => `<tr>
+    <td style="color:#fff;font-weight:700">${d.name}</td>
+    <td style="color:var(--text-mid)">${d.loc}</td>
+    <td><span class="rep-zone">${d.state}</span></td>
+    <td style="font-weight:700;color:#fff">${d.rev}</td>
+    <td>${d.orders}</td>
+    <td style="color:${d.outstanding==='—'?'var(--text-dim)':'var(--red)'};font-weight:${d.outstanding==='—'?400:700}">${d.outstanding}</td>
+    <td><span class="chip ${sMap[d.status]}">${d.status}</span></td>
+  </tr>`).join('');
+}
+
+// Build attendance table
+function buildAttendTable() {
+  const tbody = document.getElementById('attend-table');
+  if (!tbody) return;
+  const data = [
+    { ...REPS[0], present:20, absent:1, leave:1, avgH:7.8, km:342 },
+    { ...REPS[1], present:19, absent:2, leave:1, avgH:7.5, km:318 },
+    { ...REPS[2], present:20, absent:1, leave:1, avgH:7.6, km:334 },
+    { ...REPS[3], present:18, absent:2, leave:2, avgH:7.2, km:288 },
+    { ...REPS[4], present:17, absent:3, leave:2, avgH:6.8, km:265 },
+    { ...REPS[5], present:19, absent:1, leave:2, avgH:7.9, km:344 },
+    { ...REPS[6], present:15, absent:5, leave:2, avgH:6.4, km:224 },
+    { ...REPS[7], present:20, absent:1, leave:1, avgH:7.7, km:356 },
+    { ...REPS[8], present:19, absent:2, leave:1, avgH:7.4, km:328 },
+    { ...REPS[9], present:16, absent:4, leave:2, avgH:6.6, km:248 },
+  ];
+  tbody.innerHTML = data.map(r => {
+    const pct = Math.round(r.present/22*100);
+    const s = pct>=85?'chip-g':pct>=75?'chip-go':'chip-r';
+    return `<tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:9px">
+          <div class="rep-av" style="background:${r.color}22;color:${r.color}">${r.initials}</div>
+          <div class="rep-name">${r.name}</div>
+        </div>
+      </td>
+      <td><span class="rep-zone">${r.state}</span></td>
+      <td style="color:var(--green);font-weight:700">${r.present}</td>
+      <td style="color:var(--red)">${r.absent}</td>
+      <td style="color:var(--gold)">${r.leave}</td>
+      <td>
+        <div class="pbar">
+          <div class="pbar-track"><div class="pbar-fill" style="width:${pct}%;background:${pctColor(pct)}"></div></div>
+          <div class="pbar-pct" style="color:${pctColor(pct)}">${pct}%</div>
+        </div>
+      </td>
+      <td style="font-family:'DM Mono',monospace">${r.avgH}h</td>
+      <td style="font-family:'DM Mono',monospace">${r.km} km</td>
+      <td><span class="chip ${s}">${pct>=85?'Regular':pct>=75?'Acceptable':'Irregular'}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// Monthly revenue trend
+function buildRevTrend() {
+  const el = document.getElementById('rev-trend-chart');
+  if (!el) return;
+  const months = ['Jan','Feb','Mar','Apr','May','Jun'];
+  const vals   = [24, 28, 31, 34, 31, 38];
+  const max    = 40;
+  el.innerHTML = `
+    <div style="display:flex;align-items:flex-end;gap:10px;height:100px;margin-bottom:8px">
+      ${vals.map((v,i)=>`
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="font-size:10px;color:var(--text-mid);font-family:'DM Mono',monospace">₹${v}L</div>
+          <div style="width:100%;height:${Math.round(v/max*80)}px;background:${i===5?'var(--green)':'var(--green-dim)'};border-radius:4px 4px 0 0;transition:all .3s"></div>
+        </div>`).join('')}
+    </div>
+    <div style="display:flex;gap:10px">
+      ${months.map(m=>`<div style="flex:1;text-align:center;font-size:10px;color:var(--text-dim);font-family:'DM Mono',monospace">${m}</div>`).join('')}
+    </div>`;
+}
+
+// NAV
+const tbMap = {
+  overview:   ['Executive Overview',      'SeedWise Technologies Pvt. Ltd. · June 2025 · 8 States · 12 Reps · CEO View'],
+  team:       ['Sales Team Performance',  '12 Sales Reps · South & North India · June 2025'],
+  pipeline:   ['Pipeline & Revenue',      '198 active leads · ₹52L total pipeline · All Territories'],
+  territory:  ['Territory Map',           '8 States · 36 Districts · 52 Dealers · 1.6K Farmers'],
+  products:   ['Product Performance',     '67+ F1 varieties · ISO 9001:2015 · Jun 2025'],
+  dealers:    ['Dealer Network',          '42 active dealers · 6 states · ₹28L revenue'],
+  attendance: ['Attendance & HR',         'All 10 reps · June 2025 · Bangalore HQ'],
+  alerts:     ['Alerts & Actions',        '2 critical · 3 warnings · 5 total open'],
+};
+
+function go(el, panel) {
+  document.querySelectorAll('.sb-nav').forEach(n => n.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  const t = document.getElementById('panel-'+panel);
+  if (t) t.classList.add('active');
+  if (tbMap[panel]) {
+    document.getElementById('tb-title').textContent = tbMap[panel][0];
+    document.getElementById('tb-sub').textContent   = tbMap[panel][1];
+  }
+}
+
+function swTab(el) {
+  const row = el.closest('.tab-row');
+  row.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// Init all
+buildRepTable();
+buildFullTeam();
+buildTargetBars();
+buildPipelineBars();
+buildZoneBars();
+buildProdRank();
+buildOppTable();
+buildDealerTable();
+buildAttendTable();
+buildRevTrend();
+</script>
+</body>
+</html>
