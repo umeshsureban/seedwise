@@ -442,6 +442,107 @@
     font-size:9.5px; font-weight:800; text-transform:uppercase; letter-spacing:1.8px;
     padding:5px 13px; border-radius:20px; opacity:.85; z-index:9999;
   }
+
+  /* ── BOTTOM TAB BAR (mobile only) ── */
+  .mob-tabs {
+    display:none; position:fixed; bottom:0; left:0; right:0; z-index:8000;
+    background:#fff; border-top:1px solid var(--sw-border);
+    height:62px; padding:0 4px;
+    box-shadow:0 -4px 20px rgba(27,77,46,.1);
+  }
+  .mob-tabs-inner { display:flex; height:100%; align-items:center; justify-content:space-around; }
+  .mob-tab {
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+    padding:8px 6px; border-radius:12px; cursor:pointer;
+    color:var(--sw-text-muted); min-width:52px; transition:all .18s;
+    border:none; background:none;
+  }
+  .mob-tab.active { color:var(--sw-green); }
+  .mob-tab-ico { font-size:20px; line-height:1; position:relative; }
+  .mob-tab-lbl { font-size:9.5px; font-weight:700; font-family:'Plus Jakarta Sans',sans-serif; }
+  .mob-tab-badge {
+    position:absolute; top:-4px; right:-8px;
+    background:var(--sw-gold); color:var(--sw-green-dark);
+    font-size:8px; font-weight:800; min-width:15px; height:15px;
+    border-radius:10px; display:flex; align-items:center; justify-content:center;
+    padding:0 3px;
+  }
+  .mob-tab.active .mob-tab-ico::after {
+    content:''; position:absolute; bottom:-6px; left:50%; transform:translateX(-50%);
+    width:20px; height:3px; background:var(--sw-green); border-radius:10px;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width:767px) {
+    body { overflow:auto; height:auto; }
+    .app { flex-direction:column; height:auto; min-height:100vh; box-shadow:none; }
+
+    /* Hide sidebar */
+    .sidebar { display:none; }
+
+    /* Main fills full width */
+    .main { overflow:visible; }
+    .content { overflow-y:visible; padding:16px 14px 80px; }
+
+    /* Topbar */
+    .topbar { padding:0 14px; height:56px; gap:10px; }
+    .tb-title { font-size:17px; }
+    .tb-sub { display:none; }
+    .weather-pill { display:none; }
+    .btn { padding:7px 12px; font-size:12px; }
+
+    /* Show bottom tabs */
+    .mob-tabs { display:block; }
+
+    /* Stat cards: 4-col → 2-col */
+    .stats-row { grid-template-columns:repeat(2,1fr) !important; gap:10px; }
+    .stat { padding:14px 16px; }
+    .stat-val { font-size:24px; }
+
+    /* two-col → single */
+    .two-col { grid-template-columns:1fr; gap:12px; }
+
+    /* Product grid: 3-col → 1-col */
+    .prod-grid { grid-template-columns:1fr; }
+
+    /* Events grid: 2-col → 1-col */
+    .events-grid { grid-template-columns:1fr; }
+
+    /* Dealer grid: 3-col → 2-col */
+    .dealer-grid { grid-template-columns:repeat(2,1fr); gap:10px; }
+
+    /* Quick actions: 4-col → 4-col (smaller) */
+    .qa-grid { gap:8px; }
+    .qa { padding:12px 6px; }
+    .qa-icon { font-size:20px; }
+    .qa-lbl { font-size:10px; }
+
+    /* Calendar grid stays 7 but smaller */
+    .cal-day { padding:6px 4px; }
+    .cal-day .d-num { font-size:14px; }
+
+    /* Panel headers */
+    [style*="display:flex;align-items:center;justify-content:space-between"] {
+      flex-direction:column; align-items:flex-start !important; gap:10px;
+    }
+
+    /* Pipe labels smaller */
+    .pipe-lbl { width:70px; font-size:10.5px; }
+
+    /* Watermark clear of tab bar */
+    .wm { bottom:70px; }
+
+    /* Visit items: keep horizontal, just truncate */
+    .vlist-item { padding:10px 14px; gap:10px; }
+  }
+
+  @media (max-width:479px) {
+    .stats-row { grid-template-columns:1fr !important; }
+    .dealer-grid { grid-template-columns:1fr; }
+    .topbar { padding:0 10px; }
+    .tb-title { font-size:15px; }
+    .content { padding:14px 10px 80px; }
+  }
 </style>
 </head>
 <body>
@@ -1133,6 +1234,32 @@
 
 <div class="wm">Demo · AITOmate</div>
 
+<!-- ── MOBILE BOTTOM TAB BAR ── -->
+<nav class="mob-tabs" role="navigation" aria-label="Main navigation">
+  <div class="mob-tabs-inner">
+    <button class="mob-tab active" onclick="goMob(this,'dashboard')" data-panel="dashboard">
+      <span class="mob-tab-ico">📊</span>
+      <span class="mob-tab-lbl">Home</span>
+    </button>
+    <button class="mob-tab" onclick="goMob(this,'visits')" data-panel="visits">
+      <span class="mob-tab-ico">🗺️<span class="mob-tab-badge">4</span></span>
+      <span class="mob-tab-lbl">Visits</span>
+    </button>
+    <button class="mob-tab" onclick="goMob(this,'orders')" data-panel="orders">
+      <span class="mob-tab-ico">📦<span class="mob-tab-badge">6</span></span>
+      <span class="mob-tab-lbl">Orders</span>
+    </button>
+    <button class="mob-tab" onclick="goMob(this,'catalogue')" data-panel="catalogue">
+      <span class="mob-tab-ico">🌾</span>
+      <span class="mob-tab-lbl">Catalogue</span>
+    </button>
+    <button class="mob-tab" onclick="goMob(this,'targets')" data-panel="targets">
+      <span class="mob-tab-ico">🎯</span>
+      <span class="mob-tab-lbl">Targets</span>
+    </button>
+  </div>
+</nav>
+
 <script>
 const topbarMap = {
   dashboard:  ["Good Morning, Arjun 👋",           "Friday, 6 Jun 2025 · Bangalore North Zone · Karnataka"],
@@ -1156,6 +1283,20 @@ function go(el, panel) {
     document.getElementById('tb-title').textContent = topbarMap[panel][0];
     document.getElementById('tb-sub').textContent   = topbarMap[panel][1];
   }
+  // sync bottom tabs
+  document.querySelectorAll('.mob-tab').forEach(function(tab) {
+    tab.classList.toggle('active', tab.dataset.panel === panel);
+  });
+  window.scrollTo(0,0);
+}
+
+function goMob(btn, panel) {
+  // find matching sidebar nav and delegate
+  var found = null;
+  document.querySelectorAll('.sb-nav').forEach(function(n) {
+    if (n.getAttribute('onclick') && n.getAttribute('onclick').indexOf("'"+panel+"'") !== -1) found = n;
+  });
+  go(found, panel);
 }
 
 function swTab(el) {

@@ -436,6 +436,24 @@ body{
 .si-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
 .si-lbl{font-size:13px;font-weight:700;color:var(--text);flex:1;}
 .si-chv{color:var(--text-3);}
+
+/* ── RESPONSIVE: go full-screen on actual phones ── */
+@media (max-width:500px),(max-height:900px) and (max-width:600px){
+  body { overflow:auto; align-items:stretch; justify-content:stretch; }
+  .vp { height:100dvh; min-height:100vh; gap:0; }
+  .vp-label { display:none; }
+  .blob { display:none; }
+  .phone {
+    width:100vw; height:100dvh; min-height:100vh;
+    border-radius:0; box-shadow:none;
+    flex-shrink:1;
+  }
+  .phone-side-btn { display:none; }
+  .di { display:none; }
+  .sb { height:44px; padding:0 20px 8px; }
+  .tabs { height:70px; padding:0 4px 8px; }
+  .t-lbl { font-size:9px; }
+}
 </style>
 </head>
 <body>

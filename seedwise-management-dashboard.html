@@ -362,9 +362,91 @@ body {
 .rank-1 { color:var(--gold); }
 .rank-2 { color:var(--text-mid); }
 .rank-3 { color:var(--orange); }
+
+/* ── MOBILE HAMBURGER ── */
+.mob-menu-btn {
+  display:none; background:none; border:none; color:var(--text); cursor:pointer;
+  font-size:22px; padding:4px 8px; border-radius:7px; line-height:1;
+  transition:background .15s; flex-shrink:0;
+}
+.mob-menu-btn:hover { background:var(--bg3); }
+
+/* ── DRAWER OVERLAY ── */
+.drawer-overlay {
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,.55);
+  z-index:5000; backdrop-filter:blur(2px);
+}
+.drawer-open .drawer-overlay { display:block; }
+
+/* ── RESPONSIVE ── */
+@media (max-width:767px) {
+  html, body { overflow:auto; height:auto; }
+  .shell { flex-direction:column; height:auto; min-height:100vh; }
+
+  /* Sidebar becomes a fixed drawer */
+  .sidebar {
+    position:fixed; top:0; left:-260px; height:100%; width:240px; z-index:6000;
+    transition:left .28s ease; overflow-y:auto;
+    box-shadow:4px 0 24px rgba(0,0,0,.6);
+  }
+  .drawer-open .sidebar { left:0; }
+
+  /* Main fills full width */
+  .main { display:block; }
+  .content { overflow-y:visible; }
+
+  /* Topbar */
+  .topbar { padding:0 14px; height:52px; gap:8px; }
+  .mob-menu-btn { display:flex; align-items:center; justify-content:center; }
+  .tb-title { font-size:14px; }
+  .tb-sub { display:none; }
+  .tb-right { gap:6px; }
+  .tb-pill { display:none; }
+  .btn { padding:5px 10px; font-size:11px; }
+
+  /* Hide extra buttons on small screens */
+  .btn-ghost { display:none; }
+
+  /* KPI grid */
+  .kpi-row { grid-template-columns:repeat(2,1fr) !important; gap:10px; }
+  .kpi { padding:13px 14px; }
+  .kpi-val { font-size:22px; }
+
+  /* Grid layouts → single column */
+  .g2, .g3, .g13, .g31 { grid-template-columns:1fr !important; }
+
+  /* Tables: horizontal scroll */
+  .rep-table { font-size:11px; }
+  .card { overflow-x:auto; }
+  .rep-table th, .rep-table td { padding:8px 10px; white-space:nowrap; }
+
+  /* Region grid */
+  .region-grid { grid-template-columns:1fr !important; }
+
+  /* Topbar layout fix */
+  .topbar > div:first-child { flex:1; min-width:0; overflow:hidden; }
+
+  /* Bar chart label width */
+  .bar-lbl { width:60px; font-size:10px; }
+
+  /* Alert items */
+  .alert-item { flex-wrap:wrap; gap:8px; }
+  .alert-amt { font-size:11px; }
+
+  /* Watermark */
+  .wm { bottom:8px; right:8px; font-size:8px; padding:4px 8px; }
+}
+
+@media (max-width:479px) {
+  .kpi-row { grid-template-columns:1fr !important; }
+  .kpi-val { font-size:26px; }
+  .topbar { padding:0 10px; }
+  .tb-title { font-size:13px; }
+}
 </style>
 </head>
 <body>
+<div class="drawer-overlay" onclick="closeDrawer()"></div>
 <div class="shell">
 
 <!-- ── SIDEBAR ── -->
@@ -424,6 +506,7 @@ body {
 <!-- ── MAIN ── -->
 <div class="main">
   <div class="topbar">
+    <button class="mob-menu-btn" onclick="toggleDrawer()" aria-label="Open menu">☰</button>
     <div>
       <div class="tb-title" id="tb-title">Executive Overview</div>
       <div class="tb-sub"   id="tb-sub">SeedWise Technologies Pvt. Ltd. · June 2025 · 8 States · 12 Reps</div>
@@ -1093,6 +1176,9 @@ const tbMap = {
   alerts:     ['Alerts & Actions',        '2 critical · 3 warnings · 5 total open'],
 };
 
+function toggleDrawer() { document.body.classList.toggle('drawer-open'); }
+function closeDrawer()  { document.body.classList.remove('drawer-open'); }
+
 function go(el, panel) {
   document.querySelectorAll('.sb-nav').forEach(n => n.classList.remove('active'));
   if (el) el.classList.add('active');
@@ -1103,6 +1189,7 @@ function go(el, panel) {
     document.getElementById('tb-title').textContent = tbMap[panel][0];
     document.getElementById('tb-sub').textContent   = tbMap[panel][1];
   }
+  closeDrawer();
 }
 
 function swTab(el) {
